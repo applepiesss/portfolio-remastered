@@ -2,9 +2,9 @@ import { FlickeringGrid } from "@/components/ui/flickering-grid";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-[100dvh] w-full bg-[#161616]">
+    <div className="flex flex-col min-h-[100dvh] w-full bg-[#0A0A0A]">
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center min-h-[100dvh] w-full px-8 text-center overflow-hidden">
+      <section className="relative flex min-h-[100dvh] w-full p-10 sm:p-14 md:p-20 lg:p-24 overflow-hidden">
         {/* Background Grid */}
         <div className="absolute inset-0 z-0 mix-blend-screen pointer-events-none">
           <FlickeringGrid
@@ -18,21 +18,9 @@ export default function Home() {
           />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center justify-center gap-6">
-          <h1 className="text-[clamp(40px,6vw,80px)] font-bold text-white leading-[1.1] tracking-tight drop-shadow-sm">
-            Creative <em className="text-[#F28CA0] not-italic drop-shadow-sm">Portfolio</em>
-          </h1>
-          <p className="text-white/80 text-[clamp(16px,2vw,20px)] leading-relaxed max-w-2xl font-light">
-            Crafting digital experiences with a touch of organic, playful, and soft design. Welcome to my remastered portfolio.
-          </p>
-          <div className="mt-8 flex gap-4">
-            <button className="px-8 py-3 rounded-full bg-[#F28CA0] text-[#161616] font-semibold hover:bg-[#F4A7B9] transition-colors">
-              View Work
-            </button>
-            <button className="px-8 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 transition-colors">
-              Contact Me
-            </button>
-          </div>
+        {/* Center Card */}
+        <div className="relative z-10 flex-1 w-full bg-[#0A0A0A] border border-[#DB7093]/60 rounded-[4px] shadow-2xl p-8 flex flex-col items-center justify-center backdrop-blur-sm">
+          {/* Card content will go here */}
         </div>
       </section>
     </div>

@@ -138,14 +138,8 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
           if (spiralValue > threshold) {
             const opacity = squares[i * rows + j]
             
-            // Un-warped distance for the color gradient so it still radiates nicely
-            const trueDist = Math.sqrt(dx * dx + dy * dy)
-            const t = Math.min(1, trueDist / (maxDist * 0.8))
-            const r = Math.round(c1.r * (1 - t) + c2.r * t)
-            const g = Math.round(c1.g * (1 - t) + c2.g * t)
-            const b = Math.round(c1.b * (1 - t) + c2.b * t)
-
-            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`
+            // Vibrant but Pastel Pink (#FF82A5)
+            ctx.fillStyle = `rgba(255, 130, 165, ${opacity})`
             ctx.fillRect(
               i * (squareSize + gridGap) * dpr,
               j * (squareSize + gridGap) * dpr,
