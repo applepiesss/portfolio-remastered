@@ -174,14 +174,31 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
 
       let lastTime = 0
       let elapsedTime = 0
+      let lastDrawTime = 0
+      const FPS_LIMIT = 15 // Limit to 15 FPS for huge performance gains since it's a slow ambient effect
+
       const animate = (time: number) => {
         if (!isInView || !gridParams) return
+        animationFrameId = requestAnimationFrame(animate)
 
-        const deltaTime = lastTime === 0 ? 0 : (time - lastTime) / 1000
+        if (lastTime === 0) {
+          lastTime = time
+          lastDrawTime = time
+        }
+
+        const deltaTime = (time - lastTime) / 1000
         lastTime = time
         elapsedTime += deltaTime
 
-        updateSquares(gridParams.squares, deltaTime)
+        // Throttle drawing to FPS_LIMIT
+        if (time - lastDrawTime < 1000 / FPS_LIMIT) {
+          return
+        }
+
+        const drawDelta = (time - lastDrawTime) / 1000
+        lastDrawTime = time
+
+        updateSquares(gridParams.squares, drawDelta)
         drawGrid(
           ctx,
           canvas.width,
@@ -192,7 +209,6 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
           gridParams.dpr,
           elapsedTime
         )
-        animationFrameId = requestAnimationFrame(animate)
       }
 
       resizeObserver = new ResizeObserver(() => {
