@@ -6,10 +6,9 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
-  { name: "Work", href: "#work" },
-  { name: "About", href: "#about" },
-  { name: "Playground", href: "#playground" },
-  { name: "Contact", href: "#contact" },
+  { name: "About Me", href: "#about" },
+  { name: "Projects", href: "#projects" },
+  { name: "Skills", href: "#skills" },
 ];
 
 export const Skiper58 = () => {
@@ -73,7 +72,7 @@ const TextRoll: React.FC<{
               className="inline-block"
               key={i}
             >
-              {l}
+              {l === " " ? <span style={{ display: "inline-block", width: "0.4em" }} /> : l}
             </motion.span>
           );
         })}
@@ -101,7 +100,7 @@ const TextRoll: React.FC<{
               className="inline-block"
               key={i}
             >
-              {l}
+              {l === " " ? <span style={{ display: "inline-block", width: "0.4em" }} /> : l}
             </motion.span>
           );
         })}
