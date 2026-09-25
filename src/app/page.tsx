@@ -37,6 +37,40 @@ export default function Home() {
             {/* Separator */}
             <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
 
+            {/* Experience Section */}
+            <section id="experience" className="min-h-full flex flex-col justify-center py-24">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 uppercase tracking-widest">Work <span className="text-[#FF82A5]">Experience</span></h2>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col border-l-2 border-[#DB7093]/40 pl-6">
+                  <h3 className="text-xl font-bold text-white tracking-wide">Senior Frontend Engineer</h3>
+                  <span className="text-[#FF82A5] text-sm tracking-widest mb-3 uppercase">Company Name — 2023 - Present</span>
+                  <p className="text-white/60 leading-relaxed">
+                    Developed scalable web applications and led the frontend architecture for the core product.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+
+
+            {/* Separator */}
+            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
+
+            {/* Skills Section */}
+            <section id="skills" className="min-h-full flex flex-col justify-center py-24">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-10 uppercase tracking-widest">Tech <span className="text-[#FF82A5]">Skills</span></h2>
+              <div className="flex flex-wrap gap-4">
+                {['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'Node.js', 'UI/UX Design'].map(skill => (
+                  <span key={skill} className="px-5 py-3 border border-[#DB7093]/40 text-[#FF82A5] text-sm md:text-base tracking-widest uppercase rounded-[4px] hover:bg-[#FF82A5]/10 hover:border-[#FF82A5] transition-colors cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            {/* Separator */}
+            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
+
             {/* Projects Section */}
             <section id="projects" className="min-h-full flex flex-col justify-center py-24">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-10 uppercase tracking-widest">Selected <span className="text-[#FF82A5]">Projects</span></h2>
@@ -47,21 +81,6 @@ export default function Home() {
                 <div className="h-64 bg-white/5 border border-white/10 rounded-[4px] flex items-center justify-center hover:border-[#FF82A5]/60 hover:bg-white/10 transition-all duration-300 cursor-pointer">
                   <span className="text-white/30 tracking-widest font-bold">PROJECT 02</span>
                 </div>
-              </div>
-            </section>
-
-            {/* Separator */}
-            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
-
-            {/* Skills Section */}
-            <section id="skills" className="min-h-full flex flex-col justify-center pt-24 pb-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-10 uppercase tracking-widest">Tech <span className="text-[#FF82A5]">Skills</span></h2>
-              <div className="flex flex-wrap gap-4">
-                {['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'Node.js', 'UI/UX Design'].map(skill => (
-                  <span key={skill} className="px-5 py-3 border border-[#DB7093]/40 text-[#FF82A5] text-sm md:text-base tracking-widest uppercase rounded-[4px] hover:bg-[#FF82A5]/10 hover:border-[#FF82A5] transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
               </div>
             </section>
 
