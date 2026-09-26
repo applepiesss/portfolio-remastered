@@ -52,32 +52,32 @@ export default function Home() {
               {/* Links & Resume */}
               <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start md:items-center mt-10 md:mt-12 w-full">
                 <div className="flex flex-wrap justify-center md:justify-start items-center gap-5 md:gap-8 w-full md:w-auto">
-                <a href="https://github.com/applepiesss" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group/social cursor-pointer">
-                  <GithubIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  <div className="pointer-events-none">
-                    <Link001 href="https://github.com/applepiesss" className="pointer-events-auto text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                      GitHub
-                    </Link001>
-                  </div>
-                </a>
+                <div className="flex items-center gap-3 group/social">
+                  <a href="https://github.com/applepiesss" target="_blank" rel="noopener noreferrer">
+                    <GithubIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
+                  </a>
+                  <Link001 href="https://github.com/applepiesss" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
+                    GitHub
+                  </Link001>
+                </div>
 
-                <a href="https://www.linkedin.com/in/nadia-aisyah-fazila/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group/social cursor-pointer">
-                  <LinkedinIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  <div className="pointer-events-none">
-                    <Link001 href="https://www.linkedin.com/in/nadia-aisyah-fazila/" className="pointer-events-auto text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                      LinkedIn
-                    </Link001>
-                  </div>
-                </a>
+                <div className="flex items-center gap-3 group/social">
+                  <a href="https://www.linkedin.com/in/nadia-aisyah-fazila/" target="_blank" rel="noopener noreferrer">
+                    <LinkedinIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
+                  </a>
+                  <Link001 href="https://www.linkedin.com/in/nadia-aisyah-fazila/" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
+                    LinkedIn
+                  </Link001>
+                </div>
 
-                <a href="mailto:nadiaaiiisyahf@gmail.com" className="flex items-center gap-3 group/social cursor-pointer">
-                  <Mail className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  <div className="pointer-events-none">
-                    <Link001 href="mailto:nadiaaiiisyahf@gmail.com" className="pointer-events-auto text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                      Email
-                    </Link001>
-                  </div>
-                </a>
+                <div className="flex items-center gap-3 group/social">
+                  <a href="mailto:nadiaaiiisyahf@gmail.com">
+                    <Mail className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
+                  </a>
+                  <Link001 href="mailto:nadiaaiiisyahf@gmail.com" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
+                    Email
+                  </Link001>
+                </div>
 
                 </div>
 
