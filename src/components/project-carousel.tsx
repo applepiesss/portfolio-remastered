@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState, useSyncExternalStore } from "react";
 
-import { Lightbox } from "@/components/image-preview";
+import { ProjectModal } from "@/components/project-modal";
 import type { Project } from "@/lib/projects";
 
 // 2 cards per view from md up, 1 on phones (matches the md:--per-view rule below)
@@ -21,11 +21,14 @@ const usePerView = () =>
     () => 2,
   );
 
-const SWIPE_PX = 40;
+// Drag past this fraction of a card to move to the next one
+const SNAP_THRESHOLD = 0.2;
+// Movement (px) before a press counts as a drag rather than a click on the cover
+const DRAG_START_PX = 6;
 
 /**
- * Projects carousel: up to 2 cards in view, ← / → buttons to step one card at a time,
- * dots showing (and jumping to) the current position, and swipe on touch screens.
+ * Projects carousel: up to 2 cards in view. The track can be dragged with the mouse or a finger
+ * (it follows the pointer, then snaps to the nearest card), and ← / → buttons and dots also navigate.
  */
 export const ProjectCarousel = ({ projects }: { projects: Project[] }) => {
   const perView = usePerView();
@@ -34,56 +37,106 @@ export const ProjectCarousel = ({ projects }: { projects: Project[] }) => {
   // Clamp so switching from 1 to 2 per view never leaves an empty slot at the end
   const index = Math.min(rawIndex, positions - 1);
   const [preview, setPreview] = useState<Project | null>(null);
-  const swipeStart = useRef<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ startX: number; dx: number; active: boolean; pointerId: number } | null>(null);
+  // Set when a press turned into a drag, so the click that ends it doesn't open the lightbox
+  const suppressClick = useRef(false);
 
   const go = (next: number) => setIndex(Math.max(0, Math.min(positions - 1, next)));
+
+  const setDragOffset = (px: number) => trackRef.current?.style.setProperty("--drag", `${px}px`);
+
+  // Width of one step (card + gap), measured from the first card
+  const stepWidth = () => {
+    const track = trackRef.current;
+    const card = track?.firstElementChild as HTMLElement | null;
+    if (!track || !card) return 1;
+    return card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || "0");
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    drag.current = { startX: e.clientX, dx: 0, active: false, pointerId: e.pointerId };
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d || d.pointerId !== e.pointerId) return;
+    let dx = e.clientX - d.startX;
+    if (!d.active) {
+      if (Math.abs(dx) < DRAG_START_PX) return;
+      d.active = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+      trackRef.current?.classList.add("is-dragging");
+    }
+    // Rubber-band at the ends
+    if ((index === 0 && dx > 0) || (index === positions - 1 && dx < 0)) dx *= 0.3;
+    d.dx = dx;
+    setDragOffset(dx);
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d || d.pointerId !== e.pointerId || !d.active) return;
+    suppressClick.current = true;
+    trackRef.current?.classList.remove("is-dragging");
+    setDragOffset(0);
+    const steps = d.dx / stepWidth();
+    // Snap: round to the nearest card, but a small flick past the threshold still moves one
+    const move = Math.abs(steps) < SNAP_THRESHOLD ? 0 : steps < 0 ? Math.max(1, Math.round(-steps)) : -Math.max(1, Math.round(steps));
+    go(index + move);
+  };
 
   return (
     <div>
       <div
-        className="overflow-hidden"
-        onPointerDown={(e) => {
-          if (e.pointerType !== "mouse") swipeStart.current = e.clientX;
-        }}
-        onPointerUp={(e) => {
-          if (swipeStart.current === null) return;
-          const dx = e.clientX - swipeStart.current;
-          swipeStart.current = null;
-          if (Math.abs(dx) > SWIPE_PX) go(index + (dx < 0 ? 1 : -1));
+        className="cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onClickCapture={(e) => {
+          if (suppressClick.current) {
+            e.preventDefault();
+            e.stopPropagation();
+            suppressClick.current = false;
+          }
         }}
       >
         <div
+          ref={trackRef}
           className="project-track flex gap-[var(--gap)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ "--i": index } as React.CSSProperties}
         >
           {projects.map((project, i) => (
             <article
               key={project.name}
-              className="project-card group shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition-colors duration-300 hover:border-brand/40"
+              className="project-card group shrink-0"
               aria-hidden={i < index || i >= index + perView}
             >
               <button
                 type="button"
                 onClick={() => setPreview(project)}
-                className="relative block aspect-video w-full overflow-hidden cursor-zoom-in"
-                aria-label={`View ${project.name} screenshot`}
+                className="block w-full cursor-pointer text-left"
+                aria-label={`Open ${project.name} details`}
                 tabIndex={i < index || i >= index + perView ? -1 : 0}
               >
-                <Image
-                  src={project.image}
-                  alt={`${project.name} preview`}
-                  fill
-                  sizes="(min-width: 48rem) 40vw, 90vw"
-                  className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-                />
+                <span className="relative block aspect-video w-full overflow-hidden rounded-lg ring-1 ring-white/10">
+                  <Image
+                    src={project.image}
+                    alt={`${project.name} preview`}
+                    fill
+                    sizes="(min-width: 48rem) 40vw, 90vw"
+                    draggable={false}
+                    className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                </span>
+                <span className="mt-4 block">
+                  <span className="block font-heading text-lg font-semibold text-white md:text-xl">{project.name}</span>
+                  <span className="mt-2 block text-sm leading-relaxed text-white/60 md:text-[15px]">{project.description}</span>
+                </span>
               </button>
-              <div className="p-5 md:p-6">
-                <p className="font-mono text-[11px] text-white/35">
-                  {String(i + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-                </p>
-                <h3 className="mt-1.5 font-heading text-lg md:text-xl font-semibold text-white">{project.name}</h3>
-                <p className="mt-2 text-sm md:text-[15px] leading-relaxed text-white/60">{project.description}</p>
-              </div>
             </article>
           ))}
         </div>
@@ -125,12 +178,7 @@ export const ProjectCarousel = ({ projects }: { projects: Project[] }) => {
         </button>
       </div>
 
-      <Lightbox
-        src={preview?.image ?? ""}
-        alt={preview ? `${preview.name} preview` : ""}
-        open={preview !== null}
-        onClose={() => setPreview(null)}
-      />
+      <ProjectModal project={preview} onClose={() => setPreview(null)} />
     </div>
   );
 };

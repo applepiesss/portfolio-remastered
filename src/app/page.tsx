@@ -195,9 +195,10 @@ export default function Home() {
                 <div>
                   <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
                   <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
-                    Hi, I&apos;m Nadia — a Computer Science student at Universitas Indonesia who learns best by building.
-                    I enjoy working across the stack, from backend systems to frontend interfaces, with a focus on
-                    understanding how things work and growing with every project I take on.
+                    Hi, I&apos;m Nadia! I&apos;m a Computer Science student at Universitas Indonesia, still early on and
+                    enjoying every bit of it. I learn by doing, which mostly means building something, getting stuck, and
+                    somehow figuring it out at 2 a.m. I&apos;ve made a few web and mobile apps so far, and each one taught
+                    me something I didn&apos;t expect.
                   </p>
 
                   {/* Links */}
@@ -327,7 +328,7 @@ export default function Home() {
                   Nadia
                 </div>
                 <div className="flex justify-center mt-1.5">
-                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS @ Universitas Indonesia</Link001>
+                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS Student @ UI</Link001>
                 </div>
               </div>
 

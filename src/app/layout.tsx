@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-});
 
 const sora = Sora({
   subsets: ["latin"],
@@ -28,7 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-theme="pink"
-      className={`${jakarta.variable} ${sora.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
         {children}

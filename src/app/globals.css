@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-jakarta);
+  --font-sans: var(--font-sora);
   --font-mono: var(--font-geist-mono);
   --color-brand: var(--brand);
   --font-heading: var(--font-sora);
@@ -425,7 +425,13 @@
 .project-track {
   --gap: 1.25rem;
   --per-view: 1;
-  transform: translateX(calc(var(--i) * -1 * ((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view) + var(--gap))));
+  /* --drag is the live pointer offset while dragging (set from JS) */
+  transform: translateX(calc(var(--i) * -1 * ((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view) + var(--gap)) + var(--drag, 0px)));
+}
+
+/* Follow the pointer 1:1 while dragging; the snap back uses the normal transition */
+.project-track.is-dragging {
+  transition: none;
 }
 
 @media (min-width: 48rem) {
