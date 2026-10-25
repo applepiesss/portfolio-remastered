@@ -10,20 +10,22 @@ const navigationItems = [
   { name: "Experience", href: "#experience" },
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
+  { name: "Articles", href: "#articles" },
+  { name: "Achievements", href: "#achievements" },
 ];
 
 export const Skiper58 = () => {
   return (
-    <ul className="flex flex-row md:flex-col items-center justify-center gap-6 md:gap-10 w-full py-2 md:py-0 flex-wrap">
+    <ul className="flex flex-row md:flex-col items-center justify-center gap-5 md:gap-6 w-full py-2 md:py-0 flex-wrap">
       {navigationItems.map((item, index) => (
         <li
           className="relative flex cursor-pointer flex-col items-center overflow-visible"
           key={index}
         >
-          <a href={item.href} className="relative flex items-start text-white/40 hover:text-[#FF82A5] transition-colors duration-300">
+          <a href={item.href} className="relative flex items-start text-white/50 hover:text-brand transition-colors duration-300">
             <TextRoll
               center
-              className="text-[11px] md:text-[15px] font-bold uppercase tracking-[0.2em]"
+              className="text-xs md:text-sm font-medium tracking-wide"
             >
               {item.name}
             </TextRoll>

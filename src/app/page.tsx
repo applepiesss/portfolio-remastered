@@ -2,7 +2,9 @@ import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
 import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
-import { Mail, Download } from "lucide-react";
+import { ThemeHoldArea } from "@/components/theme-hold-area";
+import { CertificatePreview } from "@/components/certificate-preview";
+import { Mail, Download, ArrowUpRight } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -18,132 +20,295 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const socials = [
+  { label: "GitHub", href: "https://github.com/applepiesss", Icon: GithubIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nadia-aisyah-fazila/", Icon: LinkedinIcon },
+  { label: "Email", href: "mailto:nadiaaiiisyahf@gmail.com", Icon: Mail },
+];
+
+const experiences = [
+  {
+    role: "Staff of Business Development",
+    org: "SIWAK-NG",
+    period: "Sep 2025 — Oct 2025",
+    points: [
+      "Managed operational and promotional aspects of paid exam preparation classes",
+      "Coordinated communication between tutors and tutees to ensure smooth class delivery",
+      "Supported marketing efforts to drive class enrollment and increase participant reach",
+    ],
+  },
+  {
+    role: "Staff of Product Management Academy",
+    org: "COMPFEST",
+    period: "Apr 2025 — Oct 2025",
+    points: [
+      "Contributed to execution of a Product Management Academy",
+      "Handled event operations as MC and operator across academy sessions",
+      "Managed documentation and coordinated mentor-mentee relationships throughout the program",
+      "Gained practical knowledge in product management frameworks and lifecycle",
+    ],
+  },
+  {
+    role: "Mentor",
+    org: "Dasar-Dasar Pemrograman 0",
+    period: "Jul 2025 — Sep 2025",
+    points: [
+      "Facilitated foundational Python and programming logic learning for first-year Computer Science students",
+      "Guided learners through complex problems using structured lessons and hands-on exercises",
+      "Built mentee confidence in syntax proficiency and independent problem-solving",
+    ],
+  },
+  {
+    role: "Mentor",
+    org: "Open House Fasilkom UI",
+    period: "Nov 2024",
+    points: [
+      "Guided prospective students through Fasilkom UI and shared academic experiences",
+      "Addressed inquiries regarding curriculum, student life, and faculty culture",
+    ],
+  },
+];
+
+const skills = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Node.js", "UI/UX Design"];
+
+// Placeholder entries: replace with real articles (title, date, short excerpt, link)
+const articles = [
+  {
+    title: "Article Title 01",
+    date: "Jan 2026",
+    excerpt: "A short one- or two-sentence summary of what this article is about.",
+    href: "#",
+  },
+  {
+    title: "Article Title 02",
+    date: "Dec 2025",
+    excerpt: "A short one- or two-sentence summary of what this article is about.",
+    href: "#",
+  },
+];
+
+// Placeholder entry: replace with the real hackathon details and put the certificate image in public/certificates/
+const achievements = [
+  {
+    title: "Finalist",
+    event: "Hackathon Name",
+    organizer: "Organizer",
+    date: "Mon 2025",
+    certificate: "/certificates/placeholder.svg",
+  },
+];
+
+const SectionHeading =({ index, label, title, hero = false }: { index: string; label: string; title: string; hero?: boolean }) => (
+  <div className={hero ? "mb-5" : "mb-10"}>
+    <p className="font-mono text-xs text-brand tracking-wider mb-3">
+      {index} <span className="text-white/20">/</span> {label}
+    </p>
+    {hero ? (
+      <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gradient-brand pb-1 w-fit">{title}</h2>
+    ) : (
+      <h2 className="font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">{title}</h2>
+    )}
+    <div className={`${hero ? "mt-5" : "mt-6"} h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent`} />
+  </div>
+);
+
+const gridThemes: { theme: string; color: string }[] = [
+  { theme: "pink", color: "#FF7EB9" },
+  { theme: "blue", color: "#93B8FF" },
+  { theme: "purple", color: "#B794FF" },
+];
+
 export default function Home() {
   return (
-    <div className="flex flex-col h-[100dvh] max-h-[100dvh] w-full bg-[#0A0A0A] overflow-hidden">
+    <div className="flex flex-col h-[100dvh] max-h-[100dvh] w-full bg-[#09090B] overflow-hidden">
       {/* Hero Section */}
-      <section className="relative flex flex-col h-full w-full p-10 sm:p-14 md:p-20 lg:p-24 overflow-hidden">
-        {/* Background Grid */}
-        <div className="absolute inset-0 z-0 mix-blend-screen pointer-events-none">
-          <FlickeringGrid
-            className="w-full h-full"
-            squareSize={4}
-            gridGap={1}
-            color="#F4A7B9"
-            maxOpacity={0.35}
-            flickerChance={0.1}
-            shape="mixed"
-          />
-        </div>
+      <ThemeHoldArea className="relative flex flex-col h-full w-full p-4 sm:p-8 md:p-12 lg:p-16 overflow-hidden">
+        {/* Background Grid: only the active theme's grid shows (see globals.css); faded toward the center so the motion frames the content instead of competing with it */}
+        {gridThemes.map(({ theme, color }) => (
+          <div key={theme} className={`bg-grid-${theme} absolute inset-0 z-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,rgba(0,0,0,0.55)_10%,black_65%)]`}>
+            <FlickeringGrid
+              className="w-full h-full"
+              squareSize={3}
+              gridGap={5}
+              color={color}
+              maxOpacity={0.6}
+              flickerChance={0.12}
+            />
+          </div>
+        ))}
 
         {/* Cards Wrapper */}
-        <div className="relative z-10 flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 h-full">
+        <div className="relative z-10 flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 h-full min-h-0">
 
-          {/* Main Content Card (Left on Desktop, Top on Mobile) */}
-          <div className="flex-1 bg-[#0A0A0A] border border-[#DB7093]/60 rounded-[4px] shadow-2xl p-6 md:p-14 flex flex-col backdrop-blur-sm overflow-y-auto scroll-smooth">
+          {/* Main Content Card */}
+          <div data-no-theme-hold className="flex-1 min-h-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md overflow-y-auto scroll-smooth">
 
             {/* About Me Section */}
-            <section id="about" className="flex flex-col justify-start pt-6 md:pt-10 pb-12 md:pb-24 px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 uppercase tracking-widest">About <span className="text-[#FF82A5]">Me</span></h2>
-              <p className="text-white/60 text-base md:text-lg leading-relaxed tracking-wide">
-                Hi! I'm Nadia, just a curious CS student @UI who loves learning by building things. I enjoy exploring different areas of tech, from backend systems to frontend interfaces, always with the goal of understanding how things work and growing with every line of code :]
+            <section id="about" className="px-6 md:px-14 lg:px-20 pt-12 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
+              <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+                Hi, I&apos;m Nadia — a Computer Science student at Universitas Indonesia who learns best by building.
+                I enjoy working across the stack, from backend systems to frontend interfaces, with a focus on
+                understanding how things work and growing with every project I take on.
               </p>
 
               {/* Links & Resume */}
-              <div className="flex flex-col md:flex-row gap-5 md:gap-8 items-start md:items-center mt-10 md:mt-12 w-full">
-                <div className="flex flex-wrap justify-center md:justify-start items-center gap-5 md:gap-8 w-full md:w-auto">
-                <div className="flex items-center gap-3 group/social">
-                  <a href="https://github.com/applepiesss" target="_blank" rel="noopener noreferrer">
-                    <GithubIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  </a>
-                  <Link001 href="https://github.com/applepiesss" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                    GitHub
-                  </Link001>
+              <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center mt-10 w-full">
+                <div className="flex flex-wrap items-center gap-6 md:gap-8">
+                  {socials.map(({ label, href, Icon }) => (
+                    <div key={label} className="flex items-center gap-2.5 group/social">
+                      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                        <Icon className="w-[18px] h-[18px] text-white/60 group-hover/social:text-brand transition-colors" />
+                      </a>
+                      <Link001 href={href} className="text-sm text-white/60 group-hover/social:text-brand group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors">
+                        {label}
+                      </Link001>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="flex items-center gap-3 group/social">
-                  <a href="https://www.linkedin.com/in/nadia-aisyah-fazila/" target="_blank" rel="noopener noreferrer">
-                    <LinkedinIcon className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  </a>
-                  <Link001 href="https://www.linkedin.com/in/nadia-aisyah-fazila/" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                    LinkedIn
-                  </Link001>
-                </div>
-
-                <div className="flex items-center gap-3 group/social">
-                  <a href="mailto:nadiaaiiisyahf@gmail.com">
-                    <Mail className="w-5 h-5 text-white/70 group-hover/social:text-[#FF82A5] transition-colors" />
-                  </a>
-                  <Link001 href="mailto:nadiaaiiisyahf@gmail.com" className="text-sm md:text-base text-white/70 group-hover/social:text-[#FF82A5] group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors uppercase tracking-widest">
-                    Email
-                  </Link001>
-                </div>
-
-                </div>
-
-                <a href="/CV_NadiaAisyahFazila.pdf" download className="flex justify-center items-center gap-2 text-xs md:text-sm text-[#FF82A5] hover:text-white transition-colors uppercase tracking-widest border border-[#FF82A5]/50 hover:border-white px-5 py-3 rounded-[3px] bg-[#FF82A5]/10 hover:bg-white/10 w-full md:w-auto md:ml-auto">
-                  <Download className="w-4 h-4" /> Download Resume
+                <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full md:w-auto md:ml-auto">
+                  <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
                 </a>
               </div>
             </section>
 
-            {/* Separator */}
-            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
+            <hr className="border-t border-white/10" />
 
             {/* Experience Section */}
-            <section id="experience" className="flex flex-col justify-start py-12 md:py-24 px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 uppercase tracking-widest">Work <span className="text-[#FF82A5]">Experience</span></h2>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col border-l-2 border-[#DB7093]/40 pl-6">
-                  <h3 className="text-lg md:text-xl font-bold text-white tracking-wide">Senior Frontend Engineer</h3>
-                  <span className="text-[#FF82A5] text-xs md:text-sm tracking-widest mb-2 uppercase">Company Name — 2023 - Present</span>
-                  <p className="text-white/60 text-sm md:text-base leading-relaxed">
-                    Developed scalable web applications and led the frontend architecture for the core product.
-                  </p>
-                </div>
+            <section id="experience" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
+              <SectionHeading index="02" label="Experience" title="Relevant experience" />
+              <div className="flex flex-col divide-y divide-white/[0.06]">
+                {experiences.map((exp) => (
+                  <div key={`${exp.role}-${exp.org}`} className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-2 lg:gap-8 py-7 first:pt-0 last:pb-0">
+                    <span className="font-mono text-xs text-white/40 pt-1.5">{exp.period}</span>
+                    <div>
+                      <h3 className="font-heading text-base md:text-lg font-medium text-white">{exp.role}</h3>
+                      <p className="text-sm text-brand mt-0.5 mb-3">{exp.org}</p>
+                      <ul className="text-white/60 text-sm md:text-[15px] leading-relaxed space-y-1.5">
+                        {exp.points.map((point) => (
+                          <li key={point} className="relative pl-4 before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-px before:bg-white/30">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
-
-
-            {/* Separator */}
-            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
+            <hr className="border-t border-white/10" />
 
             {/* Skills Section */}
-            <section id="skills" className="flex flex-col justify-start py-12 md:py-24 px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 uppercase tracking-widest">Tech <span className="text-[#FF82A5]">Skills</span></h2>
-              <div className="flex flex-wrap gap-4">
-                {['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'Node.js', 'UI/UX Design'].map(skill => (
-                  <span key={skill} className="px-4 py-2 border border-[#DB7093]/40 text-[#FF82A5] text-xs md:text-sm tracking-widest uppercase rounded-[4px] hover:bg-[#FF82A5]/10 hover:border-[#FF82A5] transition-colors cursor-default">
+            <section id="skills" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
+              <SectionHeading index="03" label="Skills" title="Tech stack" />
+              <div className="flex flex-wrap gap-2.5">
+                {skills.map((skill) => (
+                  <span key={skill} className="px-3.5 py-1.5 border border-white/10 bg-white/[0.03] text-white/75 text-sm rounded-md hover:border-brand/50 hover:text-brand transition-colors cursor-default">
                     {skill}
                   </span>
                 ))}
               </div>
             </section>
 
-            {/* Separator */}
-            <hr className="-mx-6 md:-mx-14 border-t border-[#FF82A5]/50" />
+            <hr className="border-t border-white/10" />
 
             {/* Projects Section */}
-            <section id="projects" className="flex flex-col justify-start pt-12 md:pt-24 pb-6 md:pb-10 px-4 md:px-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-10 uppercase tracking-widest">Selected <span className="text-[#FF82A5]">Projects</span></h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-64 bg-white/5 border border-white/10 rounded-[4px] flex items-center justify-center hover:border-[#FF82A5]/60 hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                  <span className="text-white/30 tracking-widest font-bold">PROJECT 01</span>
-                </div>
-                <div className="h-64 bg-white/5 border border-white/10 rounded-[4px] flex items-center justify-center hover:border-[#FF82A5]/60 hover:bg-white/10 transition-all duration-300 cursor-pointer">
-                  <span className="text-white/30 tracking-widest font-bold">PROJECT 02</span>
-                </div>
+            <section id="projects" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="04" label="Projects" title="Selected projects" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {["Project 01", "Project 02"].map((project) => (
+                  <div key={project} className="h-56 bg-white/[0.02] border border-white/10 rounded-lg flex items-center justify-center hover:border-brand/40 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer">
+                    <span className="font-mono text-xs text-white/30">{project}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Articles Section */}
+            <section id="articles" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="05" label="Articles" title="Writing" />
+              <div className="flex flex-col divide-y divide-white/[0.06]">
+                {articles.map((article) => (
+                  <a
+                    key={article.title}
+                    href={article.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group grid grid-cols-1 lg:grid-cols-[180px_1fr_auto] gap-2 lg:gap-8 py-6 first:pt-0 last:pb-0"
+                  >
+                    <span className="font-mono text-xs text-white/40 pt-1.5">{article.date}</span>
+                    <div>
+                      <h3 className="font-heading text-base md:text-lg font-medium text-white group-hover:text-brand transition-colors">{article.title}</h3>
+                      <p className="text-white/60 text-sm md:text-[15px] leading-relaxed mt-1.5">{article.excerpt}</p>
+                    </div>
+                    <ArrowUpRight className="hidden lg:block w-4 h-4 mt-1.5 text-white/30 group-hover:text-brand group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                  </a>
+                ))}
+              </div>
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Achievements Section: each entry is a small terminal window */}
+            <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="06" label="Achievements" title="Achievements" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {achievements.map((item) => (
+                  <div
+                    key={`${item.title}-${item.event}`}
+                    className="group bg-white/[0.02] border border-white/10 rounded-lg overflow-hidden hover:border-brand/40 transition-colors duration-300"
+                  >
+                    {/* Title bar */}
+                    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
+                      <span className="size-2.5 rounded-full bg-white/15 group-hover:bg-brand/70 transition-colors" />
+                      <span className="size-2.5 rounded-full bg-white/15" />
+                      <span className="size-2.5 rounded-full bg-white/15" />
+                      <span className="ml-3 font-mono text-[11px] text-white/35">achievements.sh</span>
+                    </div>
+
+                    {/* Output */}
+                    <div className="p-5 font-mono text-xs md:text-[13px] leading-relaxed">
+                      <p>
+                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
+                        <span className="text-white/80">achievement --show</span>
+                      </p>
+                      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 mt-3">
+                        <dt className="text-white/35">status</dt>
+                        <dd className="text-brand">✓ {item.title.toLowerCase()}</dd>
+                        <dt className="text-white/35">event</dt>
+                        <dd className="text-white font-medium">{item.event}</dd>
+                        <dt className="text-white/35">by</dt>
+                        <dd className="text-white/65">{item.organizer}</dd>
+                        <dt className="text-white/35">date</dt>
+                        <dd className="text-white/65">{item.date}</dd>
+                      </dl>
+                      <p className="mt-4">
+                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
+                        <span className="text-white/80">open certificate.png</span>
+                      </p>
+                      <div className="mt-3">
+                        <CertificatePreview src={item.certificate} alt={`${item.title} certificate — ${item.event}`} />
+                      </div>
+                      <p className="mt-3 flex items-center">
+                        <span className="text-brand">~</span>&nbsp;<span className="text-white/30">$</span>
+                        <span className="terminal-cursor ml-1.5 inline-block w-[0.55em] h-[1.1em] bg-brand/80" />
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
           </div>
 
-          {/* Navigation Sidebar Card (Right on Desktop, Bottom on Mobile) */}
-          <div className="w-full md:w-64 lg:w-80 shrink-0 bg-[#0A0A0A] border border-[#DB7093]/60 rounded-[4px] shadow-2xl p-4 md:p-8 lg:p-10 flex flex-row md:flex-col items-center justify-between md:justify-center backdrop-blur-sm gap-4 md:gap-8">
+          {/* Profile & Navigation Card */}
+          <div data-no-theme-hold className="relative w-full md:w-64 lg:w-72 shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md p-4 md:p-8 flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-8">
 
-            {/* Left Column on Mobile: Profile Photo */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-44 md:h-44 lg:w-56 lg:h-56 shrink-0 rounded-[4px] overflow-hidden border border-[#DB7093]/60 shadow-lg mx-auto">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-40 md:h-40 lg:w-48 lg:h-48 shrink-0 rounded-lg overflow-hidden ring-1 ring-white/10">
               <img
                 src="/nadia.jpeg"
                 alt="Nadia Aisyah Fazila"
@@ -151,22 +316,29 @@ export default function Home() {
               />
             </div>
 
-            {/* Right Column on Mobile: Text & Links */}
-            <div className="flex-1 md:flex-none flex flex-col justify-center items-center w-full md:gap-8">
-              {/* Logo */}
-              <div className="text-[#FF82A5] font-bold text-lg md:text-xl tracking-tight select-none text-center leading-tight uppercase w-full">
-                <TextDecode text="Nadia Aisyah Fazila" speed={60} duration={3500} />
+            <div className="flex-1 md:flex-none flex flex-col justify-center items-center w-full gap-1 md:gap-8">
+              <div className="text-center">
+                <div className="font-heading font-extrabold text-2xl md:text-4xl tracking-tight leading-tight text-gradient-brand w-fit mx-auto">
+                  <TextDecode text="Nadia" speed={60} duration={1500} />
+                </div>
+                <div className="flex justify-center mt-1.5">
+                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS @ Universitas Indonesia</Link001>
+                </div>
               </div>
 
-              {/* Nav Links */}
-              <div className="w-full flex flex-col justify-center mt-2 md:mt-0">
+              <nav className="w-full">
                 <Skiper58 />
-              </div>
+              </nav>
+
             </div>
+
+            <p className="hidden md:block absolute bottom-3 inset-x-0 font-mono text-[8px] text-white/25 text-center">
+              psst... hold the background to switch colors
+            </p>
           </div>
 
         </div>
-      </section>
+      </ThemeHoldArea>
     </div>
   );
 }

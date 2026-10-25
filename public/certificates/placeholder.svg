@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1414" height="1000" viewBox="0 0 1414 1000">
+  <rect width="1414" height="1000" fill="#141417"/>
+  <rect x="40" y="40" width="1334" height="920" fill="none" stroke="#3a3a40" stroke-width="4" stroke-dasharray="16 12"/>
+  <text x="707" y="480" fill="#8a8a93" font-family="monospace" font-size="44" text-anchor="middle">certificate placeholder</text>
+  <text x="707" y="550" fill="#5a5a62" font-family="monospace" font-size="30" text-anchor="middle">put your image in public/certificates/</text>
+</svg>
