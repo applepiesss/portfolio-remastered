@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
+import { PixelArt, type Bitmap } from "@/components/pixel-art";
 import { THEME_COLORS, THEMES, type PortfolioTheme } from "@/lib/themes";
 
 const HOLD_MS = 600;
@@ -10,7 +11,6 @@ const BURST_MS = 900;
 const SPREAD_MS = 1400;
 const MOVE_TOLERANCE = 12;
 
-// Pixel-art bitmaps ("X" = lit pixel), drawn with square cells like the background grid
 // Hold shapes, used in this order on successive holds
 const SHAPES = {
   heart: [
@@ -61,34 +61,7 @@ const PIXEL = ["X"];
 
 const HOLD_CELL = 2.5;
 
-type Bitmap = string[];
 type ShapeName = keyof typeof SHAPES;
-
-const PixelArt = ({ bitmap, className, pixelClassName, rowDelay }: {
-  bitmap: Bitmap;
-  className?: string;
-  pixelClassName?: string;
-  /** Per-row animation delay, so pixels can light up row by row */
-  rowDelay?: (row: number) => number;
-}) => (
-  <svg viewBox={`0 0 ${bitmap[0].length} ${bitmap.length}`} className={className} shapeRendering="crispEdges" fill="currentColor">
-    {bitmap.flatMap((line, y) =>
-      [...line].map((cell, x) =>
-        cell === "X" ? (
-          <rect
-            key={`${x}-${y}`}
-            x={x + 0.07}
-            y={y + 0.07}
-            width={0.86}
-            height={0.86}
-            className={pixelClassName}
-            style={rowDelay ? { animationDelay: `${rowDelay(y)}ms` } : undefined}
-          />
-        ) : null,
-      ),
-    )}
-  </svg>
-);
 
 // Centered on the press point; pixels light up from the bottom row to the top over HOLD_MS
 const HoldShape = ({ bitmap, burst }: { bitmap: Bitmap; burst: boolean }) => {

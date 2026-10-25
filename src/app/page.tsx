@@ -3,7 +3,8 @@ import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
 import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
-import { Mail, Download, ArrowUpRight, Award } from "lucide-react";
+import { CertificatePreview } from "@/components/certificate-preview";
+import { Mail, Download, ArrowUpRight } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -86,19 +87,14 @@ const articles = [
   },
 ];
 
-// Placeholder entries: replace with real certificates (name, issuer, date, credential link)
-const certificates = [
+// Placeholder entry: replace with the real hackathon details and put the certificate image in public/certificates/
+const achievements = [
   {
-    name: "Certificate Name 01",
-    issuer: "Issuing Organization",
-    date: "Jan 2026",
-    href: "#",
-  },
-  {
-    name: "Certificate Name 02",
-    issuer: "Issuing Organization",
-    date: "Dec 2025",
-    href: "#",
+    title: "Finalist",
+    event: "Hackathon Name",
+    organizer: "Organizer",
+    date: "Mon 2025",
+    certificate: "/certificates/placeholder.svg",
   },
 ];
 
@@ -257,26 +253,52 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Certificates Section */}
-            <section id="certificates" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="06" label="Certificates" title="Licenses & certifications" />
+            {/* Achievements Section: each entry is a small terminal window */}
+            <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="06" label="Achievements" title="Achievements" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {certificates.map((cert) => (
-                  <a
-                    key={cert.name}
-                    href={cert.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-start gap-4 p-5 bg-white/[0.02] border border-white/10 rounded-lg hover:border-brand/40 hover:bg-white/[0.04] transition-all duration-300"
+                {achievements.map((item) => (
+                  <div
+                    key={`${item.title}-${item.event}`}
+                    className="group bg-white/[0.02] border border-white/10 rounded-lg overflow-hidden hover:border-brand/40 transition-colors duration-300"
                   >
-                    <Award className="w-5 h-5 shrink-0 mt-0.5 text-brand" />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-heading text-[15px] font-medium text-white leading-snug group-hover:text-brand transition-colors">{cert.name}</h3>
-                      <p className="text-sm text-white/60 mt-1">{cert.issuer}</p>
-                      <p className="font-mono text-xs text-white/40 mt-3">Issued {cert.date}</p>
+                    {/* Title bar */}
+                    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
+                      <span className="size-2.5 rounded-full bg-white/15 group-hover:bg-brand/70 transition-colors" />
+                      <span className="size-2.5 rounded-full bg-white/15" />
+                      <span className="size-2.5 rounded-full bg-white/15" />
+                      <span className="ml-3 font-mono text-[11px] text-white/35">achievements.sh</span>
                     </div>
-                    <ArrowUpRight className="w-4 h-4 shrink-0 text-white/30 group-hover:text-brand group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
+
+                    {/* Output */}
+                    <div className="p-5 font-mono text-xs md:text-[13px] leading-relaxed">
+                      <p>
+                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
+                        <span className="text-white/80">achievement --show</span>
+                      </p>
+                      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 mt-3">
+                        <dt className="text-white/35">status</dt>
+                        <dd className="text-brand">✓ {item.title.toLowerCase()}</dd>
+                        <dt className="text-white/35">event</dt>
+                        <dd className="text-white font-medium">{item.event}</dd>
+                        <dt className="text-white/35">by</dt>
+                        <dd className="text-white/65">{item.organizer}</dd>
+                        <dt className="text-white/35">date</dt>
+                        <dd className="text-white/65">{item.date}</dd>
+                      </dl>
+                      <p className="mt-4">
+                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
+                        <span className="text-white/80">open certificate.png</span>
+                      </p>
+                      <div className="mt-3">
+                        <CertificatePreview src={item.certificate} alt={`${item.title} certificate — ${item.event}`} />
+                      </div>
+                      <p className="mt-3 flex items-center">
+                        <span className="text-brand">~</span>&nbsp;<span className="text-white/30">$</span>
+                        <span className="terminal-cursor ml-1.5 inline-block w-[0.55em] h-[1.1em] bg-brand/80" />
+                      </p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </section>

@@ -11,7 +11,7 @@ const navigationItems = [
   { name: "Skills", href: "#skills" },
   { name: "Projects", href: "#projects" },
   { name: "Articles", href: "#articles" },
-  { name: "Certificates", href: "#certificates" },
+  { name: "Achievements", href: "#achievements" },
 ];
 
 export const Skiper58 = () => {
