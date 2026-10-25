@@ -1,12 +1,13 @@
 import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
-import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
 import { Envelope } from "@/components/envelope";
 import { TechStack } from "@/components/tech-stack";
+import { N4dsLogo } from "@/components/n4ds-logo";
+import { TextDecode } from "@/components/ui/text-decode";
 import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
-import { Mail, Download, ArrowUpRight } from "lucide-react";
+import { Mail, Download } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -71,19 +72,17 @@ const experiences = [
   },
 ];
 
-// Placeholder entries: replace with real articles (title, date, short excerpt, link)
+// Upcoming articles; add an href and swap the badge for a link once they're published
 const articles = [
   {
-    title: "Article Title 01",
-    date: "Jan 2026",
-    excerpt: "A short one- or two-sentence summary of what this article is about.",
-    href: "#",
+    title: "Hackathon Experience",
+    date: "TBA",
+    excerpt: "What I learned reaching the finals of IFEST and BYTESFEST 2026, from brainstorming to the final pitch.",
   },
   {
-    title: "Article Title 02",
-    date: "Dec 2025",
-    excerpt: "A short one- or two-sentence summary of what this article is about.",
-    href: "#",
+    title: "Let's Make a Photobooth Web With Me",
+    date: "TBA",
+    excerpt: "A step-by-step build of a browser photobooth: camera access, fun filters and printable photo strips.",
   },
 ];
 
@@ -146,7 +145,9 @@ const SectionHeading =({ index, label, title, hero = false }: { index: string; l
       {index} <span className="text-white/20">/</span> {label}
     </p>
     {hero ? (
-      <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gradient-brand pb-1 w-fit">{title}</h2>
+      <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gradient-brand pb-1 w-fit">
+        <TextDecode text={title} speed={55} duration={2500} />
+      </h2>
     ) : (
       <h2 className="font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">{title}</h2>
     )}
@@ -281,25 +282,21 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Articles Section */}
+            {/* Articles Section: upcoming articles, not linked yet */}
             <section id="articles" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading index="05" label="Articles" title="Writing" />
               <div className="flex flex-col divide-y divide-white/[0.06]">
                 {articles.map((article) => (
-                  <a
-                    key={article.title}
-                    href={article.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group grid grid-cols-1 lg:grid-cols-[180px_1fr_auto] gap-2 lg:gap-8 py-6 first:pt-0 last:pb-0"
-                  >
-                    <span className="font-mono text-xs text-white/40 pt-1.5">{article.date}</span>
+                  <div key={article.title} className="grid grid-cols-1 lg:grid-cols-[180px_1fr_auto] lg:items-center gap-2 lg:gap-8 py-6 first:pt-0 last:pb-0">
+                    <span className="font-mono text-xs text-white/40">{article.date}</span>
                     <div>
-                      <h3 className="font-heading text-base md:text-lg font-medium text-white group-hover:text-brand transition-colors">{article.title}</h3>
+                      <h3 className="font-heading text-base md:text-lg font-medium text-white">{article.title}</h3>
                       <p className="text-white/60 text-sm md:text-[15px] leading-relaxed mt-1.5">{article.excerpt}</p>
                     </div>
-                    <ArrowUpRight className="hidden lg:block w-4 h-4 mt-1.5 text-white/30 group-hover:text-brand group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
+                    <span className="w-fit rounded-full border border-brand/40 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-brand whitespace-nowrap">
+                      coming soon
+                    </span>
+                  </div>
                 ))}
               </div>
             </section>
@@ -316,6 +313,9 @@ export default function Home() {
 
           {/* Profile & Navigation Card */}
           <div data-no-theme-hold className="relative w-full md:w-64 lg:w-72 shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md p-4 md:p-8 flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-8">
+            {/* Small brand logo tucked in the corner (not a link); letters swing like laundry on hover */}
+            <N4dsLogo strokeWidth={11} className="absolute right-5 top-4 hidden h-7 w-auto md:block" />
+
 
             <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-40 md:h-40 lg:w-48 lg:h-48 shrink-0 rounded-lg overflow-hidden ring-1 ring-white/10">
               <img
@@ -328,7 +328,7 @@ export default function Home() {
             <div className="flex-1 md:flex-none flex flex-col justify-center items-center w-full gap-1 md:gap-8">
               <div className="text-center">
                 <div className="font-heading font-extrabold text-2xl md:text-4xl tracking-tight leading-tight text-gradient-brand w-fit mx-auto">
-                  <TextDecode text="Nadia" speed={60} duration={1500} />
+                  Nadia
                 </div>
                 <div className="flex justify-center mt-1.5">
                   <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS @ Universitas Indonesia</Link001>
