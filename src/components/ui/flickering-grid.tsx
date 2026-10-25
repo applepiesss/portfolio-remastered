@@ -31,21 +31,19 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
   const [isInView, setIsInView] = useState(false)
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 })
 
-  const memoizedColor = useMemo(() => {
-    const toRGBA = (color: string) => {
-      if (typeof window === "undefined") {
-        return `rgba(0, 0, 0,`
-      }
+  const rgb = useMemo(() => {
+    const toRGB = (c: string): [number, number, number] => {
+      if (typeof window === "undefined") return [0, 0, 0]
       const canvas = document.createElement("canvas")
       canvas.width = canvas.height = 1
       const ctx = canvas.getContext("2d")
-      if (!ctx) return "rgba(255, 0, 0,"
-      ctx.fillStyle = color
+      if (!ctx) return [255, 0, 0]
+      ctx.fillStyle = c
       ctx.fillRect(0, 0, 1, 1)
       const [r, g, b] = Array.from(ctx.getImageData(0, 0, 1, 1).data)
-      return `rgba(${r}, ${g}, ${b},`
+      return [r, g, b]
     }
-    return toRGBA(color)
+    return toRGB(color)
   }, [color])
 
   const setupCanvas = useCallback(
@@ -138,8 +136,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
           if (spiralValue > threshold) {
             const opacity = squares[i * rows + j]
             
-            // Vibrant but Pastel Pink (#FF82A5)
-            ctx.fillStyle = `rgba(255, 130, 165, ${opacity})`
+            ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${opacity})`
             ctx.fillRect(
               i * (squareSize + gridGap) * dpr,
               j * (squareSize + gridGap) * dpr,
@@ -150,7 +147,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
         }
       }
     },
-    [squareSize, gridGap]
+    [squareSize, gridGap, rgb]
   )
 
   useEffect(() => {
