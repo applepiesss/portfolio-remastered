@@ -338,3 +338,36 @@
   filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
 }
 
+
+/* Tech stack orbit: rings spin, logos counter-spin to stay upright; hovering the orbit pauses it */
+.orbit-ring,
+.orbit-counter {
+  animation-name: orbit-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* The logo is centered on the counter-spinner's top-left corner, so spin around that point */
+.orbit-counter {
+  transform-origin: 0 0;
+}
+
+.orbit:hover .orbit-ring,
+.orbit:hover .orbit-counter,
+.orbit:focus-within .orbit-ring,
+.orbit:focus-within .orbit-counter {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring,
+  .orbit-counter {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

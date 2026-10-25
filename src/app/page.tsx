@@ -4,6 +4,7 @@ import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
 import { Envelope } from "@/components/envelope";
+import { TechStack } from "@/components/tech-stack";
 import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
 import { Mail, Download, ArrowUpRight } from "lucide-react";
 
@@ -69,8 +70,6 @@ const experiences = [
     ],
   },
 ];
-
-const skills = ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Node.js", "UI/UX Design"];
 
 // Placeholder entries: replace with real articles (title, date, short excerpt, link)
 const articles = [
@@ -263,13 +262,7 @@ export default function Home() {
             {/* Skills Section */}
             <section id="skills" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
               <SectionHeading index="03" label="Skills" title="Tech stack" />
-              <div className="flex flex-wrap gap-2.5">
-                {skills.map((skill) => (
-                  <span key={skill} className="px-3.5 py-1.5 border border-white/10 bg-white/[0.03] text-white/75 text-sm rounded-md hover:border-brand/50 hover:text-brand transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              <TechStack />
             </section>
 
             <hr className="border-t border-white/10" />
