@@ -4,6 +4,8 @@ import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
 import { Envelope } from "@/components/envelope";
 import { TechStack } from "@/components/tech-stack";
+import { ProjectCarousel } from "@/components/project-carousel";
+import { PROJECTS } from "@/lib/projects";
 import { N4dsLogo } from "@/components/n4ds-logo";
 import { TextDecode } from "@/components/ui/text-decode";
 import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
@@ -271,13 +273,7 @@ export default function Home() {
             {/* Projects Section */}
             <section id="projects" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading index="04" label="Projects" title="Selected projects" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Project 01", "Project 02"].map((project) => (
-                  <div key={project} className="h-56 bg-white/[0.02] border border-white/10 rounded-lg flex items-center justify-center hover:border-brand/40 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer">
-                    <span className="font-mono text-xs text-white/30">{project}</span>
-                  </div>
-                ))}
-              </div>
+              <ProjectCarousel projects={PROJECTS} />
             </section>
 
             <hr className="border-t border-white/10" />

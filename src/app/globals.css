@@ -420,3 +420,20 @@
     top: 0;
   }
 }
+
+/* Projects carousel: 1 card per view on phones, 2 from md; the track shifts one card (plus gap) per step */
+.project-track {
+  --gap: 1.25rem;
+  --per-view: 1;
+  transform: translateX(calc(var(--i) * -1 * ((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view) + var(--gap))));
+}
+
+@media (min-width: 48rem) {
+  .project-track {
+    --per-view: 2;
+  }
+}
+
+.project-card {
+  flex-basis: calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
+}
