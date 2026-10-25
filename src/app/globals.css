@@ -339,7 +339,7 @@
 }
 
 
-/* Tech stack orbit: rings spin, logos counter-spin to stay upright; hovering the orbit pauses it */
+/* Tech stack orbit: rings spin, logos counter-spin to stay upright */
 .orbit-ring,
 .orbit-counter {
   animation-name: orbit-spin;
@@ -352,10 +352,11 @@
   transform-origin: 0 0;
 }
 
-.orbit:hover .orbit-ring,
-.orbit:hover .orbit-counter,
-.orbit:focus-within .orbit-ring,
-.orbit:focus-within .orbit-counter {
+/* Only the ring holding the hovered/focused logo pauses; the other keeps spinning */
+.orbit-ring:has(.orbit-logo:hover),
+.orbit-ring:has(.orbit-logo:hover) .orbit-counter,
+.orbit-ring:has(.orbit-logo:focus-visible),
+.orbit-ring:has(.orbit-logo:focus-visible) .orbit-counter {
   animation-play-state: paused;
 }
 
@@ -363,6 +364,21 @@
   .orbit-ring,
   .orbit-counter {
     animation-play-state: paused;
+  }
+}
+
+.orbit-core svg {
+  transition: scale 300ms ease-out;
+}
+
+.orbit-core:hover svg {
+  scale: 1.15;
+  animation: orbit-core-spin 900ms steps(4, end) infinite;
+}
+
+@keyframes orbit-core-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

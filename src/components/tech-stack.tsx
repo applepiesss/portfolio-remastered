@@ -34,7 +34,7 @@ const Ring = ({ items, radius, duration, reverse }: { items: Tech[]; radius: num
               style={{ animationDuration: `${duration}s`, animationDirection: reverse ? "normal" : "reverse" } as React.CSSProperties}
             >
               <div className="orbit-logo group pointer-events-auto relative -translate-x-1/2 -translate-y-1/2" tabIndex={0} aria-label={tech.name}>
-                <div className="flex size-[11cqw] min-h-10 min-w-10 items-center justify-center rounded-full border border-white/15 bg-[#1b1b20] shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition-[transform,border-color] duration-200 group-hover:scale-125 group-hover:border-brand/60 group-focus-visible:scale-125">
+                <div className="flex size-[11cqw] min-h-10 min-w-10 items-center justify-center rounded-full border border-white/15 bg-[#1b1b20] shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition-[scale,border-color] duration-300 ease-out group-hover:scale-110 group-hover:border-brand/60 group-focus-visible:scale-110">
                   <svg viewBox="0 0 24 24" fill="currentColor" className="size-[50%] text-brand" aria-hidden="true">
                     <path d={tech.icon.path} />
                   </svg>
@@ -53,7 +53,7 @@ const Ring = ({ items, radius, duration, reverse }: { items: Tech[]; radius: num
 
 /**
  * Tech stack as two counter-rotating orbits of logos around a pixel swirl.
- * Hovering the orbit pauses it; hovering a logo enlarges it and shows its name.
+ * Hovering a logo pauses its ring (the other keeps spinning), enlarges it and shows its name.
  * A plain category list sits next to it so the stack is readable at a glance.
  */
 export const TechStack = () => (
@@ -61,10 +61,10 @@ export const TechStack = () => (
     <div className="orbit @container relative mx-auto aspect-square w-full max-w-[26rem]">
       <Ring items={INNER} radius={25} duration={40} />
       <Ring items={OUTER} radius={44} duration={60} reverse />
-      <PixelArt
-        bitmap={SWIRL}
-        className="absolute left-1/2 top-1/2 w-[13cqw] -translate-x-1/2 -translate-y-1/2 text-brand"
-      />
+      {/* Center swirl: spins in 90° pixel steps while hovered */}
+      <div className="orbit-core absolute left-1/2 top-1/2 w-[13cqw] -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+        <PixelArt bitmap={SWIRL} className="block w-full text-brand" />
+      </div>
     </div>
 
     <dl className="flex flex-col gap-5">
