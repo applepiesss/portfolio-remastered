@@ -48,11 +48,23 @@ const experiences = [
     ],
   },
   {
-    role: "Member",
-    org: "Google Developer Groups on Campus UI",
-    period: "Dec 2024 — Jul 2025",
-    summary:
-      "Active member participating in community-driven technology events, skill-building workshops, and collaborative projects within the Universitas Indonesia campus.",
+    role: "Mentor",
+    org: "Dasar-Dasar Pemrograman 0",
+    period: "Jul 2025 — Sep 2025",
+    points: [
+      "Facilitated foundational Python and programming logic learning for first-year Computer Science students",
+      "Guided learners through complex problems using structured lessons and hands-on exercises",
+      "Built mentee confidence in syntax proficiency and independent problem-solving",
+    ],
+  },
+  {
+    role: "Mentor",
+    org: "Open House Fasilkom UI",
+    period: "Nov 2024",
+    points: [
+      "Guided prospective students through Fasilkom UI and shared academic experiences",
+      "Addressed inquiries regarding curriculum, student life, and faculty culture",
+    ],
   },
 ];
 
@@ -172,22 +184,18 @@ export default function Home() {
               <SectionHeading index="02" label="Experience" title="Relevant experience" />
               <div className="flex flex-col divide-y divide-white/[0.06]">
                 {experiences.map((exp) => (
-                  <div key={exp.role} className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-2 lg:gap-8 py-7 first:pt-0 last:pb-0">
+                  <div key={`${exp.role}-${exp.org}`} className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-2 lg:gap-8 py-7 first:pt-0 last:pb-0">
                     <span className="font-mono text-xs text-white/40 pt-1.5">{exp.period}</span>
                     <div>
                       <h3 className="font-heading text-base md:text-lg font-medium text-white">{exp.role}</h3>
                       <p className="text-sm text-brand mt-0.5 mb-3">{exp.org}</p>
-                      {exp.points ? (
-                        <ul className="text-white/60 text-sm md:text-[15px] leading-relaxed space-y-1.5">
-                          {exp.points.map((point) => (
-                            <li key={point} className="relative pl-4 before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-px before:bg-white/30">
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-white/60 text-sm md:text-[15px] leading-relaxed">{exp.summary}</p>
-                      )}
+                      <ul className="text-white/60 text-sm md:text-[15px] leading-relaxed space-y-1.5">
+                        {exp.points.map((point) => (
+                          <li key={point} className="relative pl-4 before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-px before:bg-white/30">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 ))}
