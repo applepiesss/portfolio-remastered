@@ -285,11 +285,9 @@
 }
 
 
-/* Blinking block cursor for terminal-style cards */
-.terminal-cursor {
-  animation: terminal-blink 1s steps(1, end) infinite;
-}
-
-@keyframes terminal-blink {
-  50% { opacity: 0; }
+/* Envelope seal wiggle on hover */
+@keyframes envelope-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
 }

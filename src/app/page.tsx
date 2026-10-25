@@ -3,7 +3,7 @@ import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
 import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
-import { CertificatePreview } from "@/components/certificate-preview";
+import { Envelope } from "@/components/envelope";
 import { Mail, Download, ArrowUpRight } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -145,31 +145,47 @@ export default function Home() {
 
             {/* About Me Section */}
             <section id="about" className="px-6 md:px-14 lg:px-20 pt-12 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
-              <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
-                Hi, I&apos;m Nadia — a Computer Science student at Universitas Indonesia who learns best by building.
-                I enjoy working across the stack, from backend systems to frontend interfaces, with a focus on
-                understanding how things work and growing with every project I take on.
-              </p>
+              {/* Heading + bio + links form one column; the envelope is centered against all of it */}
+              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_270px] gap-10 2xl:gap-12 items-center">
+                <div>
+                  <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
+                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+                    Hi, I&apos;m Nadia — a Computer Science student at Universitas Indonesia who learns best by building.
+                    I enjoy working across the stack, from backend systems to frontend interfaces, with a focus on
+                    understanding how things work and growing with every project I take on.
+                  </p>
 
-              {/* Links & Resume */}
-              <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center mt-10 w-full">
-                <div className="flex flex-wrap items-center gap-6 md:gap-8">
-                  {socials.map(({ label, href, Icon }) => (
-                    <div key={label} className="flex items-center gap-2.5 group/social">
-                      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-                        <Icon className="w-[18px] h-[18px] text-white/60 group-hover/social:text-brand transition-colors" />
-                      </a>
-                      <Link001 href={href} className="text-sm text-white/60 group-hover/social:text-brand group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors">
-                        {label}
-                      </Link001>
-                    </div>
-                  ))}
+                  {/* Links */}
+                  <div className="flex flex-wrap items-center gap-6 md:gap-8 mt-10">
+                    {socials.map(({ label, href, Icon }) => (
+                      <div key={label} className="flex items-center gap-2.5 group/social">
+                        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                          <Icon className="w-[18px] h-[18px] text-white/60 group-hover/social:text-brand transition-colors" />
+                        </a>
+                        <Link001 href={href} className="text-sm text-white/60 group-hover/social:text-brand group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors">
+                          {label}
+                        </Link001>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full md:w-auto md:ml-auto">
-                  <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
-                </a>
+                {/* Resume, delivered in an envelope. The top padding reserves the space the paper peeks into
+                    when opened (~19% of the envelope width), so the open state is what gets centered */}
+                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:max-w-none 2xl:pt-[19%]">
+                  <Envelope
+                    src="/resume-preview.jpg"
+                    alt="Resume of Nadia Aisyah Fazila, page 1"
+                    name="resume"
+                    to="recruiters"
+                    title="Nadia's Resume"
+                    subtitle="PDF · 2 pages"
+                    downloadHref="/CV_NadiaAisyahFazila.pdf"
+                  />
+                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-3 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
+                    <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
+                  </a>
+                </div>
               </div>
             </section>
 
@@ -253,52 +269,21 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Achievements Section: each entry is a small terminal window */}
+            {/* Achievements Section: each entry is a sealed envelope holding the certificate */}
             <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading index="06" label="Achievements" title="Achievements" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                 {achievements.map((item) => (
-                  <div
+                  <Envelope
                     key={`${item.title}-${item.event}`}
-                    className="group bg-white/[0.02] border border-white/10 rounded-lg overflow-hidden hover:border-brand/40 transition-colors duration-300"
-                  >
-                    {/* Title bar */}
-                    <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/10 bg-white/[0.03]">
-                      <span className="size-2.5 rounded-full bg-white/15 group-hover:bg-brand/70 transition-colors" />
-                      <span className="size-2.5 rounded-full bg-white/15" />
-                      <span className="size-2.5 rounded-full bg-white/15" />
-                      <span className="ml-3 font-mono text-[11px] text-white/35">achievements.sh</span>
-                    </div>
-
-                    {/* Output */}
-                    <div className="p-5 font-mono text-xs md:text-[13px] leading-relaxed">
-                      <p>
-                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
-                        <span className="text-white/80">achievement --show</span>
-                      </p>
-                      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 mt-3">
-                        <dt className="text-white/35">status</dt>
-                        <dd className="text-brand">✓ {item.title.toLowerCase()}</dd>
-                        <dt className="text-white/35">event</dt>
-                        <dd className="text-white font-medium">{item.event}</dd>
-                        <dt className="text-white/35">by</dt>
-                        <dd className="text-white/65">{item.organizer}</dd>
-                        <dt className="text-white/35">date</dt>
-                        <dd className="text-white/65">{item.date}</dd>
-                      </dl>
-                      <p className="mt-4">
-                        <span className="text-brand">~</span> <span className="text-white/30">$</span>{" "}
-                        <span className="text-white/80">open certificate.png</span>
-                      </p>
-                      <div className="mt-3">
-                        <CertificatePreview src={item.certificate} alt={`${item.title} certificate — ${item.event}`} />
-                      </div>
-                      <p className="mt-3 flex items-center">
-                        <span className="text-brand">~</span>&nbsp;<span className="text-white/30">$</span>
-                        <span className="terminal-cursor ml-1.5 inline-block w-[0.55em] h-[1.1em] bg-brand/80" />
-                      </p>
-                    </div>
-                  </div>
+                    src={item.certificate}
+                    alt={`${item.title} certificate — ${item.event}`}
+                    name={item.event}
+                    to="you"
+                    title={item.event}
+                    subtitle={`${item.organizer} · ${item.date}`}
+                    badge={item.title}
+                  />
                 ))}
               </div>
             </section>
