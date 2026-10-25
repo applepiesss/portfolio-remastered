@@ -90,20 +90,54 @@ const articles = [
 
 const achievements: Sticker[] = [
   {
+    kind: "achievement",
     status: "Finalist",
     event: "IFEST 2026 Hackathon",
     organizer: "Himatif FMIPA Universitas Padjadjaran",
     date: "2026",
     certificate: "/certificates/ifest.png",
+    credentialUrl: "https://ifestunpad.com/certificate/36fd3f8e-3e51-4475-9217-93920fe11e17",
     tilt: -4,
   },
   {
-    status: "Top 15 Finalist",
+    kind: "achievement",
+    status: "Finalist",
     event: "BYTESFEST 2026 Hackathon",
     organizer: "HMP Mikroptik FKIP Universitas Sebelas Maret",
     date: "Jul 2026",
     certificate: "/certificates/bytefest.jpeg",
+    credentialUrl: "https://kegiatan.fkip.uns.ac.id/verify/20260726060490154",
     tilt: 3,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Mempelajari Machine Learning dengan Python",
+    organizer: "Udemy · Hacktiv8 Indonesia",
+    date: "Jul 2026",
+    certificate: "/certificates/machine_learning.jpg",
+    credentialUrl: "https://www.udemy.com/certificate/UC-eb490a1b-b5af-4a7c-902f-6df3b6e7b949/",
+    tilt: -2,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Introduction to Java",
+    organizer: "Sololearn",
+    date: "Jan 2025",
+    certificate: "/certificates/java.jpg",
+    credentialUrl: "https://www.sololearn.com/certificates/CC-GIF3CA2L",
+    tilt: 4,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Python Developer",
+    organizer: "Sololearn",
+    date: "Dec 2024",
+    certificate: "/certificates/python.jpg",
+    credentialUrl: "https://www.sololearn.com/certificates/CC-MPEOVFCU",
+    tilt: -3,
   },
 ];
 
@@ -190,6 +224,7 @@ export default function Home() {
                     title="Nadia's Resume"
                     subtitle="PDF · 2 pages"
                     downloadHref="/CV_NadiaAisyahFazila.pdf"
+                    downloadPrompt="download my resume to unlock more"
                   />
                   <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-3 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
                     <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
@@ -278,9 +313,9 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Achievements Section: each achievement is a sticker that peels off to reveal its certificate */}
+            {/* Achievements & Certifications Section: each entry is a sticker that peels off to reveal its certificate */}
             <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="06" label="Achievements" title="Achievements" />
+              <SectionHeading index="06" label="Achievements" title="Achievements & certifications" />
               <StickerSheet stickers={achievements} />
             </section>
 

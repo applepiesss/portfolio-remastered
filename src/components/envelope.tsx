@@ -45,13 +45,15 @@ type EnvelopeProps = {
   badge?: string;
   /** If set, the lightbox gets a download button for this file */
   downloadHref?: string;
+  /** Optional download prompt under the enlarged paper */
+  downloadPrompt?: string;
 };
 
 /**
  * A sealed envelope. Clicking it breaks the pixel-swirl seal, opens the flap and
  * lets the paper peek out; clicking the paper opens it in a lightbox.
  */
-export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadHref }: EnvelopeProps) => {
+export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadHref, downloadPrompt }: EnvelopeProps) => {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((o) => !o);
 
@@ -85,7 +87,7 @@ export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadH
           onClick={(e) => open && e.stopPropagation()}
         >
           {open ? (
-            <ImagePreview src={src} alt={alt} thumbClassName={PAPER_CROP} downloadHref={downloadHref} />
+            <ImagePreview src={src} alt={alt} thumbClassName={PAPER_CROP} downloadHref={downloadHref} downloadPrompt={downloadPrompt} />
           ) : (
             <img src={src} alt="" className={`w-full rounded-md border border-white/10 ${PAPER_CROP}`} />
           )}
