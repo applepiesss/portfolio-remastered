@@ -291,3 +291,49 @@
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
 }
+
+/* Achievement stickers: resting tilt, corner peel on hover, full peel on click */
+.sticker {
+  --peel: 0px;
+  transform: rotate(var(--tilt));
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sticker-body {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--peel)), calc(100% - var(--peel)) 100%, 0 100%);
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45));
+  transition: clip-path 250ms ease, filter 250ms ease;
+}
+
+/* The folded-back corner: a light triangle sitting where the body was clipped */
+.sticker-curl {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--peel);
+  height: var(--peel);
+  border-radius: 0 0 14px 0;
+  background: linear-gradient(135deg, #f4f4f6 0%, #d9d9de 48%, transparent 50%);
+  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.35));
+  transition: width 250ms ease, height 250ms ease;
+}
+
+.sticker:hover,
+.sticker:focus-visible {
+  --peel: 26px;
+  transform: rotate(calc(var(--tilt) * 0.5)) translateY(-2px);
+}
+
+.sticker.is-peeling {
+  --peel: 120px;
+  transform: rotate(calc(var(--tilt) - 10deg)) translate(-6px, -18px) scale(1.06);
+}
+
+.sticker.is-peeling .sticker-body {
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.55));
+}
+
+/* Pixel decor stickers get a white die-cut outline */
+.sticker-decor {
+  filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
+}

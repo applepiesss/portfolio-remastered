@@ -4,6 +4,7 @@ import { TextDecode } from "@/components/ui/text-decode";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
 import { Envelope } from "@/components/envelope";
+import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
 import { Mail, Download, ArrowUpRight } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -87,14 +88,22 @@ const articles = [
   },
 ];
 
-// Placeholder entry: replace with the real hackathon details and put the certificate image in public/certificates/
-const achievements = [
+const achievements: Sticker[] = [
   {
-    title: "Finalist",
-    event: "Hackathon Name",
-    organizer: "Organizer",
-    date: "Mon 2025",
-    certificate: "/certificates/placeholder.svg",
+    status: "Finalist",
+    event: "IFEST 2026 Hackathon",
+    organizer: "Himatif FMIPA Universitas Padjadjaran",
+    date: "2026",
+    certificate: "/certificates/ifest.png",
+    tilt: -4,
+  },
+  {
+    status: "Top 15 Finalist",
+    event: "BYTESFEST 2026 Hackathon",
+    organizer: "HMP Mikroptik FKIP Universitas Sebelas Maret",
+    date: "Jul 2026",
+    certificate: "/certificates/bytefest.jpeg",
+    tilt: 3,
   },
 ];
 
@@ -269,23 +278,10 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Achievements Section: each entry is a sealed envelope holding the certificate */}
+            {/* Achievements Section: each achievement is a sticker that peels off to reveal its certificate */}
             <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading index="06" label="Achievements" title="Achievements" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                {achievements.map((item) => (
-                  <Envelope
-                    key={`${item.title}-${item.event}`}
-                    src={item.certificate}
-                    alt={`${item.title} certificate — ${item.event}`}
-                    name={item.event}
-                    to="you"
-                    title={item.event}
-                    subtitle={`${item.organizer} · ${item.date}`}
-                    badge={item.title}
-                  />
-                ))}
-              </div>
+              <StickerSheet stickers={achievements} />
             </section>
 
           </div>
