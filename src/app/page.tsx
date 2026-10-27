@@ -1,69 +1,350 @@
-import Image from "next/image";
+import { FlickeringGrid } from "@/components/ui/flickering-grid";
+import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
+import { Link001 } from "@/components/ui/skiper-ui/skiper40";
+import { ThemeHoldArea } from "@/components/theme-hold-area";
+import { Envelope } from "@/components/envelope";
+import { TechStack } from "@/components/tech-stack";
+import { ProjectCarousel } from "@/components/project-carousel";
+import { PROJECTS } from "@/lib/projects";
+import { N4dsLogo } from "@/components/n4ds-logo";
+import { TextDecode } from "@/components/ui/text-decode";
+import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
+import { Mail, Download } from "lucide-react";
+
+const GithubIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.24c3-.34 6-1.53 6-6.76a5.5 5.5 0 0 0-1.5-3.89 5.5 5.5 0 0 0-.15-3.82s-1.13-.36-3.89 1.5a13.3 13.3 0 0 0-7 0C6.27 2.22 5.14 2.58 5.14 2.58a5.5 5.5 0 0 0-.15 3.82A5.5 5.5 0 0 0 3.5 10c0 5.23 3 6.42 6 6.76-.7.62-1 1.4-1 2.92v4.32" />
+  </svg>
+);
+
+const LinkedinIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const socials = [
+  { label: "GitHub", href: "https://github.com/applepiesss", Icon: GithubIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nadia-aisyah-fazila/", Icon: LinkedinIcon },
+  { label: "Email", href: "mailto:nadiaaiiisyahf@gmail.com", Icon: Mail },
+];
+
+const experiences = [
+  {
+    role: "Staff of Business Development",
+    org: "SIWAK-NG",
+    period: "Sep 2025 - Oct 2025",
+    points: [
+      "Managed operational and promotional aspects of paid exam preparation classes",
+      "Coordinated communication between tutors and tutees to ensure smooth class delivery",
+      "Supported marketing efforts to drive class enrollment and increase participant reach",
+    ],
+  },
+  {
+    role: "Staff of Product Management Academy",
+    org: "COMPFEST",
+    period: "Apr 2025 - Oct 2025",
+    points: [
+      "Contributed to execution of a Product Management Academy",
+      "Handled event operations as MC and operator across academy sessions",
+      "Managed documentation and coordinated mentor-mentee relationships throughout the program",
+      "Gained practical knowledge in product management frameworks and lifecycle",
+    ],
+  },
+  {
+    role: "Mentor",
+    org: "Dasar-Dasar Pemrograman 0",
+    period: "Jul 2025 - Sep 2025",
+    points: [
+      "Facilitated foundational Python and programming logic learning for first-year Computer Science students",
+      "Guided learners through complex problems using structured lessons and hands-on exercises",
+      "Built mentee confidence in syntax proficiency and independent problem-solving",
+    ],
+  },
+  {
+    role: "Mentor",
+    org: "Open House Fasilkom UI",
+    period: "Nov 2024",
+    points: [
+      "Guided prospective students through Fasilkom UI and shared academic experiences",
+      "Addressed inquiries regarding curriculum, student life, and faculty culture",
+    ],
+  },
+];
+
+// Upcoming articles; add an href and swap the badge for a link once they're published
+const articles = [
+  {
+    title: "Hackathon Experience",
+    date: "TBA",
+    excerpt: "What I learned reaching the finals of IFEST and BYTESFEST 2026, from brainstorming to the final pitch.",
+  },
+  {
+    title: "Let's Make a Photobooth Web With Me",
+    date: "TBA",
+    excerpt: "A step-by-step build of a browser photobooth: camera access, fun filters and printable photo strips.",
+  },
+];
+
+const achievements: Sticker[] = [
+  {
+    kind: "achievement",
+    status: "Finalist",
+    event: "IFEST 2026 Hackathon",
+    organizer: "Himatif FMIPA Universitas Padjadjaran",
+    date: "2026",
+    certificate: "/certificates/ifest.png",
+    credentialUrl: "https://ifestunpad.com/certificate/36fd3f8e-3e51-4475-9217-93920fe11e17",
+    tilt: -4,
+  },
+  {
+    kind: "achievement",
+    status: "Finalist",
+    event: "BYTESFEST 2026 Hackathon",
+    organizer: "HMP Mikroptik FKIP Universitas Sebelas Maret",
+    date: "Jul 2026",
+    certificate: "/certificates/bytefest.jpeg",
+    credentialUrl: "https://kegiatan.fkip.uns.ac.id/verify/20260726060490154",
+    tilt: 3,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Mempelajari Machine Learning dengan Python",
+    organizer: "Udemy · Hacktiv8 Indonesia",
+    date: "Jul 2026",
+    certificate: "/certificates/machine_learning.jpg",
+    credentialUrl: "https://www.udemy.com/certificate/UC-eb490a1b-b5af-4a7c-902f-6df3b6e7b949/",
+    tilt: -2,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Introduction to Java",
+    organizer: "Sololearn",
+    date: "Jan 2025",
+    certificate: "/certificates/java.jpg",
+    credentialUrl: "https://www.sololearn.com/certificates/CC-GIF3CA2L",
+    tilt: 4,
+  },
+  {
+    kind: "certificate",
+    status: "Certificate",
+    event: "Python Developer",
+    organizer: "Sololearn",
+    date: "Dec 2024",
+    certificate: "/certificates/python.jpg",
+    credentialUrl: "https://www.sololearn.com/certificates/CC-MPEOVFCU",
+    tilt: -3,
+  },
+];
+
+const SectionHeading =({ index, label, title, hero = false }: { index: string; label: string; title: string; hero?: boolean }) => (
+  <div className={hero ? "mb-5" : "mb-10"}>
+    <p className="font-mono text-xs text-brand tracking-wider mb-3">
+      {index} <span className="text-white/20">/</span> {label}
+    </p>
+    {hero ? (
+      <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gradient-brand pb-1 w-fit">
+        <TextDecode text={title} speed={55} duration={2500} />
+      </h2>
+    ) : (
+      <h2 className="font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">{title}</h2>
+    )}
+    <div className={`${hero ? "mt-5" : "mt-6"} h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent`} />
+  </div>
+);
+
+const gridThemes: { theme: string; color: string }[] = [
+  { theme: "pink", color: "#FF7EB9" },
+  { theme: "blue", color: "#93B8FF" },
+  { theme: "purple", color: "#B794FF" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+    <div className="flex flex-col h-[100dvh] max-h-[100dvh] w-full bg-[#09090B] overflow-hidden">
+      {/* Hero Section */}
+      <ThemeHoldArea className="relative flex flex-col h-full w-full p-4 sm:p-8 md:p-12 lg:p-16 overflow-hidden">
+        {/* Background Grid: only the active theme's grid shows (see globals.css); faded toward the center so the motion frames the content instead of competing with it */}
+        {gridThemes.map(({ theme, color }) => (
+          <div key={theme} className={`bg-grid-${theme} absolute inset-0 z-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,rgba(0,0,0,0.8)_10%,black_60%)]`}>
+            <FlickeringGrid
+              className="w-full h-full"
+              squareSize={3}
+              gridGap={5}
+              color={color}
+              maxOpacity={0.85}
+              flickerChance={0.2}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+        ))}
+
+        {/* Cards Wrapper */}
+        <div className="relative z-10 flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 h-full min-h-0">
+
+          {/* Main Content Card */}
+          <div data-no-theme-hold className="flex-1 min-h-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md overflow-y-auto scroll-smooth">
+
+            {/* About Me Section */}
+            <section id="about" className="px-6 md:px-14 lg:px-20 pt-12 md:pt-20 pb-14 md:pb-20">
+              {/* Heading + bio + links form one column; the envelope is centered against all of it */}
+              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_270px] gap-10 2xl:gap-12 items-center">
+                <div>
+                  <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
+                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+                    Hi, I&apos;m Nadia! I&apos;m a Computer Science student at Universitas Indonesia, still early on and
+                    enjoying every bit of it. I learn by doing, which mostly means building something, getting stuck, and
+                    somehow figuring it out at 2 a.m. I&apos;ve made a few web and mobile apps so far, and each one taught
+                    me something I didn&apos;t expect.
+                  </p>
+
+                  {/* Links */}
+                  <div className="flex flex-wrap items-center gap-6 md:gap-8 mt-10">
+                    {socials.map(({ label, href, Icon }) => (
+                      <div key={label} className="flex items-center gap-2.5 group/social">
+                        <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+                          <Icon className="w-[18px] h-[18px] text-white/60 group-hover/social:text-brand transition-colors" />
+                        </a>
+                        <Link001 href={href} className="text-sm text-white/60 group-hover/social:text-brand group-hover/social:before:origin-left group-hover/social:before:scale-x-100 [&>svg]:group-hover/social:translate-y-0 [&>svg]:group-hover/social:opacity-100 transition-colors">
+                          {label}
+                        </Link001>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Resume, delivered in an envelope. The top padding reserves the space the paper peeks into
+                    when opened (~19% of the envelope width), so the open state is what gets centered */}
+                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:max-w-none 2xl:pt-[19%]">
+                  <Envelope
+                    src="/resume-preview.jpg"
+                    alt="Resume of Nadia Aisyah Fazila, page 1"
+                    name="resume"
+                    to="recruiters"
+                    title="Nadia's Resume"
+                    subtitle="PDF · 2 pages"
+                    downloadHref="/CV_NadiaAisyahFazila.pdf"
+                    downloadPrompt="download my resume to unlock more"
+                  />
+                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-3 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
+                    <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Experience Section */}
+            <section id="experience" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
+              <SectionHeading index="02" label="Experience" title="Relevant experience" />
+              <div className="flex flex-col divide-y divide-white/[0.06]">
+                {experiences.map((exp) => (
+                  <div key={`${exp.role}-${exp.org}`} className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-2 lg:gap-8 py-7 first:pt-0 last:pb-0">
+                    <span className="font-mono text-xs text-white/40 pt-1.5">{exp.period}</span>
+                    <div>
+                      <h3 className="font-heading text-base md:text-lg font-medium text-white">{exp.role}</h3>
+                      <p className="text-sm text-brand mt-0.5 mb-3">{exp.org}</p>
+                      <ul className="text-white/60 text-sm md:text-[15px] leading-relaxed space-y-1.5">
+                        {exp.points.map((point) => (
+                          <li key={point} className="relative pl-4 before:absolute before:left-0 before:top-[0.6em] before:w-1.5 before:h-px before:bg-white/30">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Skills Section */}
+            <section id="skills" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
+              <SectionHeading index="03" label="Skills" title="Tech stack" />
+              <TechStack />
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Projects Section */}
+            <section id="projects" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="04" label="Projects" title="Selected projects" />
+              <ProjectCarousel projects={PROJECTS} />
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Articles Section: upcoming articles, not linked yet */}
+            <section id="articles" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="05" label="Articles" title="Writing" />
+              <div className="flex flex-col divide-y divide-white/[0.06]">
+                {articles.map((article) => (
+                  <div key={article.title} className="grid grid-cols-1 lg:grid-cols-[180px_1fr_auto] lg:items-center gap-2 lg:gap-8 py-6 first:pt-0 last:pb-0">
+                    <span className="font-mono text-xs text-white/40">{article.date}</span>
+                    <div>
+                      <h3 className="font-heading text-base md:text-lg font-medium text-white">{article.title}</h3>
+                      <p className="text-white/60 text-sm md:text-[15px] leading-relaxed mt-1.5">{article.excerpt}</p>
+                    </div>
+                    <span className="w-fit rounded-full border border-brand/40 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-brand whitespace-nowrap">
+                      coming soon
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <hr className="border-t border-white/10" />
+
+            {/* Achievements & Certifications Section: each entry is a sticker that peels off to reveal its certificate */}
+            <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
+              <SectionHeading index="06" label="Achievements" title="Achievements & certifications" />
+              <StickerSheet stickers={achievements} />
+            </section>
+
+          </div>
+
+          {/* Profile & Navigation Card */}
+          <div data-no-theme-hold className="relative w-full md:w-64 lg:w-72 shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md p-4 md:p-8 flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-8">
+            {/* Small brand logo tucked in the corner (not a link); letters swing like laundry on hover */}
+            <N4dsLogo strokeWidth={11} className="absolute right-5 top-4 hidden h-7 w-auto md:block" />
+
+
+            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-40 md:h-40 lg:w-48 lg:h-48 shrink-0 rounded-lg overflow-hidden ring-1 ring-white/10">
+              <img
+                src="/nadia.jpeg"
+                alt="Nadia Aisyah Fazila"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex-1 md:flex-none flex flex-col justify-center items-center w-full gap-1 md:gap-8">
+              <div className="text-center">
+                <div className="font-heading font-extrabold text-2xl md:text-4xl tracking-tight leading-tight text-gradient-brand w-fit mx-auto">
+                  Nadia
+                </div>
+                <div className="flex justify-center mt-1.5">
+                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS Student @ UI</Link001>
+                </div>
+              </div>
+
+              <nav className="w-full">
+                <Skiper58 />
+              </nav>
+
+            </div>
+
+            <p className="hidden md:block absolute bottom-3 inset-x-0 font-mono text-[8px] text-white/25 text-center">
+              psst... hold the background to switch colors
+            </p>
+          </div>
+
         </div>
-      </main>
+      </ThemeHoldArea>
     </div>
   );
 }

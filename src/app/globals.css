@@ -1,26 +1,434 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sora);
   --font-mono: var(--font-geist-mono);
+  --color-brand: var(--brand);
+  --font-heading: var(--font-sora);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+@utility text-gradient-brand {
+  background-image: linear-gradient(120deg, var(--brand-grad-from) 0%, var(--brand-grad-via) 45%, var(--brand-grad-to) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Portfolio color themes, switched via data-theme on <html> (next-themes) */
+:root,
+[data-theme="pink"] {
+  --brand: #F9A8D4;
+  --brand-grad-from: #ffd9ef;
+  --brand-grad-via: #f9a8d4;
+  --brand-grad-to: #f0529c;
+  --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="blue"] {
+  --brand: #93B8FF;
+  --brand-grad-from: #dbe7ff;
+  --brand-grad-via: #93b8ff;
+  --brand-grad-to: #4f7dff;
+}
+
+[data-theme="purple"] {
+  --brand: #C4A7FF;
+  --brand-grad-from: #ecdfff;
+  --brand-grad-via: #c4a7ff;
+  --brand-grad-to: #8b5cf6;
+}
+
+/* Background layers: pink grid is the default; blue/purple themes swap in their own grid */
+.bg-grid-blue,
+.bg-grid-purple,
+[data-theme="blue"] .bg-grid-pink,
+[data-theme="purple"] .bg-grid-pink {
+  display: none;
+}
+
+[data-theme="blue"] .bg-grid-blue,
+[data-theme="purple"] .bg-grid-purple {
+  display: block;
+}
+
+/* Hold-to-switch theme: background is pressable, cards are not */
+.theme-hold-area {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+
+.theme-hold-area [data-no-theme-hold] {
+  cursor: auto;
+}
+
+/* The new theme spreads in as a soft-edged circle; mask size/position are animated from JS */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  mask-image: radial-gradient(closest-side, black 70%, transparent 100%);
+  mask-repeat: no-repeat;
+}
+
+/* Heart + sparkles live on their own transition layer, drawn live above the spreading theme */
+.theme-burst-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  view-transition-name: theme-burst;
+}
+
+::view-transition-group(theme-burst),
+::view-transition-new(theme-burst) {
+  animation: none;
+}
+
+::view-transition-old(theme-burst) {
+  display: none;
+}
+
+.theme-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.theme-hold-shape-wrap {
+  position: absolute;
+}
+
+/* Pixel-art motion uses steps() so it feels like a retro sprite, matching the grid */
+.theme-hold-shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation:
+    theme-heart-in 160ms steps(3, end),
+    theme-heart-beat 360ms steps(2, jump-none) 160ms infinite alternate;
+}
+
+/* Unlit pixels are dim; each row switches on as the hold progresses */
+.theme-hold-pixel {
+  opacity: 0.25;
+  animation: theme-pixel-on 1ms forwards;
+}
+
+.theme-hold-shape.is-burst {
+  animation: theme-heart-pop 420ms steps(6, end) forwards;
+}
+
+.theme-hold-shape.is-burst .theme-hold-pixel {
+  animation: none;
+  opacity: 1;
+}
+
+.theme-burst-particle {
+  position: absolute;
+  left: calc(var(--w) / -2);
+  top: calc(var(--h) / -2);
+  width: var(--w);
+  height: var(--h);
+  opacity: 0;
+  animation: theme-particle-fly var(--burst-ms) steps(12, end) forwards;
+}
+
+@keyframes theme-pixel-on {
+  to { opacity: 1; }
+}
+
+@keyframes theme-heart-in {
+  from { opacity: 0; transform: scale(0.4); }
+}
+
+@keyframes theme-heart-beat {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes theme-heart-pop {
+  0% { transform: scale(1.1); opacity: 1; }
+  35% { transform: scale(1.45); opacity: 1; }
+  100% { transform: scale(0.2); opacity: 0; }
+}
+
+@keyframes theme-particle-fly {
+  0% { opacity: 1; transform: translate(0, 0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
+}
+
+
+/* Envelope seal wiggle on hover */
+@keyframes envelope-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+
+/* Achievement stickers: resting tilt, corner peel on hover, full peel on click */
+.sticker {
+  --peel: 0px;
+  transform: rotate(var(--tilt));
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sticker-body {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--peel)), calc(100% - var(--peel)) 100%, 0 100%);
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45));
+  transition: clip-path 250ms ease, filter 250ms ease;
+}
+
+/* The folded-back corner: a light triangle sitting where the body was clipped */
+.sticker-curl {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--peel);
+  height: var(--peel);
+  border-radius: 0 0 14px 0;
+  background: linear-gradient(135deg, #f4f4f6 0%, #d9d9de 48%, transparent 50%);
+  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.35));
+  transition: width 250ms ease, height 250ms ease;
+}
+
+.sticker:hover,
+.sticker:focus-visible {
+  --peel: 26px;
+  transform: rotate(calc(var(--tilt) * 0.5)) translateY(-2px);
+}
+
+.sticker.is-peeling {
+  --peel: 120px;
+  transform: rotate(calc(var(--tilt) - 10deg)) translate(-6px, -18px) scale(1.06);
+}
+
+.sticker.is-peeling .sticker-body {
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.55));
+}
+
+/* Pixel decor stickers get a white die-cut outline */
+.sticker-decor {
+  filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
+}
+
+
+/* Tech stack waves: each layer slides sideways while its logos bob on a shared sine */
+.wave-track {
+  animation: wave-slide linear infinite;
+}
+
+.wave-bob {
+  animation: wave-bob 3s ease-in-out infinite;
+}
+
+/* Only the layer holding the hovered/focused logo pauses; the others keep moving */
+.wave-row:has(.wave-logo:hover) :is(.wave-track, .wave-bob),
+.wave-row:has(.wave-logo:focus-visible) :is(.wave-track, .wave-bob) {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-track,
+  .wave-bob {
+    animation-play-state: paused;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes wave-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wave-bob {
+  0%,
+  100% {
+    transform: translateY(calc(var(--wave-amp) * -1));
+  }
+  50% {
+    transform: translateY(var(--wave-amp));
+  }
+}
+
+/* N4ds logo: each letter hangs from its top edge; the swing itself is driven from JS (n4ds-logo.tsx) */
+.n4ds-letter {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+
+/* Text decode: each letter bounces as it locks in. It animates `top` (not transform) because a
+   transformed letter drops out of the parent's gradient text clip and would turn invisible. */
+.decode-letter {
+  position: relative;
+  display: inline-block;
+  white-space: pre;
+}
+
+.decode-pop {
+  animation: decode-pop 520ms ease-out;
+}
+
+@keyframes decode-pop {
+  0% {
+    top: -0.28em;
+  }
+  45% {
+    top: 0.05em;
+  }
+  70% {
+    top: -0.06em;
+  }
+  100% {
+    top: 0;
+  }
+}
+
+/* Projects carousel: 1 card per view on phones, 2 from md; the track shifts one card (plus gap) per step */
+.project-track {
+  --gap: 1.25rem;
+  --per-view: 1;
+  /* --drag is the live pointer offset while dragging (set from JS) */
+  transform: translateX(calc(var(--i) * -1 * ((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view) + var(--gap)) + var(--drag, 0px)));
+}
+
+/* Follow the pointer 1:1 while dragging; the snap back uses the normal transition */
+.project-track.is-dragging {
+  transition: none;
+}
+
+@media (min-width: 48rem) {
+  .project-track {
+    --per-view: 2;
+  }
+}
+
+.project-card {
+  flex-basis: calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
 }
