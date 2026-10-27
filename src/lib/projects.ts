@@ -1,3 +1,12 @@
+import type { StaticImageData } from "next/image";
+
+import ligapassCover from "../../public/projects/ligapass.png";
+import mysawitCover from "../../public/projects/mysawit.png";
+import blusukanCover from "../../public/projects/blusukan.png";
+import eventeaseCover from "../../public/projects/eventease.png";
+import cloudnapCover from "../../public/projects/cloudnap.png";
+import herrouteCover from "../../public/projects/herroute.png";
+
 /** A bolded lead-in followed by its explanation, e.g. "State pattern: ..." */
 export type Point = { title: string; text: string };
 
@@ -22,18 +31,17 @@ export type Project = {
   sections?: Section[];
   /** What I personally worked on, shown in a box above "Built with" in the pop-up */
   contributions: (string | Point)[];
+  /** Title of that box, "My contributions" unless set (e.g. "Design process" for a solo design project) */
+  contributionsLabel?: string;
   tech?: string[];
   /** Repository / project page and live demo, shown as links in the pop-up */
   projectUrl: string;
   demoUrl: string;
   /** Optional award, shown as a small badge in the pop-up */
   award?: string;
-  /** Cover image in /public/projects */
-  image: string;
+  /** Cover image from /public/projects, imported so its URL changes whenever the file does */
+  image: StaticImageData;
 };
-
-// Placeholder until my contributions for this project are written up
-const CONTRIBUTIONS_TBA = "To be added";
 
 // Placeholder until the real project and demo links are ready
 const PLACEHOLDER_URL = "http://localhost:3000";
@@ -43,7 +51,7 @@ export const PROJECTS: Project[] = [
   {
     name: "LigaPass",
     type: "Web & mobile app",
-    description: "Football ticketing platform where fans buy match tickets and read the latest news.",
+    description: "Football platform where fans book match tickets by seat category and keep up with the latest news.",
     overview: [
       "LigaPass brings football match ticketing and a football news portal into one place. Fans browse the match schedule (upcoming, ongoing and past), pick a seat category (VVIP, VIP or Regular), pay, and get a digital ticket with a barcode. They can also read and comment on news, rate and review matches, and see their own spending and attendance analytics.",
       "It was built by a team of five for the Platform-Based Programming course at Universitas Indonesia, as a Django web app and a Flutter mobile app that share the same backend. Match data comes from an English Premier League dataset on Kaggle and scraped fixtures, cleaned and standardized before being loaded.",
@@ -179,12 +187,12 @@ export const PROJECTS: Project[] = [
     award: "Best Application & Favorite App, PBP Awards 2025",
     projectUrl: PLACEHOLDER_URL,
     demoUrl: "https://jaysen-lestari-ligapass.pbp.cs.ui.ac.id/",
-    image: "/projects/ligapass.png",
+    image: ligapassCover,
   },
   {
     name: "MySawit",
     type: "Web app",
-    description: "Operations platform for palm oil plantations, from the field to the mill.",
+    description: "Palm oil plantation platform that tracks each harvest from the field to the mill and into payroll.",
     overview: [
       "MySawit is a web-based platform that brings palm oil plantation operations into one integrated system. It tracks the full commodity flow, from harvesting in the field and foreman (mandor) validation to truck delivery to the processing mill and payroll for every worker involved.",
       "It supports four roles (harvester, foreman, truck driver and admin) with role-based access control, and is built as loosely coupled microservices that communicate through well-defined interfaces instead of shared state. That keeps data consistent and makes each module easier to extend.",
@@ -336,13 +344,13 @@ export const PROJECTS: Project[] = [
     ],
     projectUrl: PLACEHOLDER_URL,
     demoUrl: PLACEHOLDER_URL,
-    image: "/projects/mysawit.png",
+    image: mysawitCover,
   },
   {
     name: "Blusukan",
     context: "BytesFest 2026",
     type: "Mobile app",
-    description: "A mobile app that guides tourists in Solo to hidden-gem local merchants during events.",
+    description: "AI travel app that turns a plain request into a walking route to hidden-gem local merchants in Solo.",
     overview: [
       "Blusukan is a mobile app for Solo Raya, Indonesia, that connects tourists with small local merchants during big events like festivals and concerts. It has two modes. Dolan Mode is for tourists: they describe what they want in plain language and get a walking route to hidden-gem merchants. Bakul Mode is for merchants: they set up a store and catalog, get stock recommendations, and record sales. An admin layer reviews events and monitors activity.",
       "The app was built by a team of 4 from the Faculty of Computer Science, Universitas Indonesia, for BytesFest 2026 (theme: Decent Work and Economic Growth). The frontend is an Expo React Native app built as an Android APK. The backend is a FastAPI service on PostgreSQL with PostGIS. It uses the Gemini API for language and image parsing, OSRM for routing, and Celery with Redis for scheduled stock calculations. The backend is deployed on Railway.",
@@ -507,13 +515,13 @@ export const PROJECTS: Project[] = [
     ],
     projectUrl: "https://github.com/pandoruy-pingin-menang-pls/blusukan-fe",
     demoUrl: PLACEHOLDER_URL,
-    image: "/projects/blusukan.png",
+    image: blusukanCover,
   },
   {
     name: "EventEase",
     context: "iFest 2026",
     type: "Web app",
-    description: "Helps people with mobility needs check if a public event's facilities fit them.",
+    description: "Event finder that scores how well each venue's facilities fit your mobility needs before you go.",
     overview: [
       "EventEase is a web app for people with mobility access needs, such as wheelchair and crutch users, older people, pregnant people and stroller users. Attendees set their needs with a checklist of seven physical accessibility attributes, with no medical labels. Each event then shows a personal 0 to 100 match score with a breakdown for each attribute. Organizers publish events with facility claims, answer accessibility requests and build a reliability score from attendee verifications.",
       "The team built it at iFest 2026 as a 24-hour hackathon project, following a proposal from the qualifying round. The frontend is a Next.js App Router app written in TypeScript and Tailwind CSS. It only displays results: scoring, data and state changes all live in a separate FastAPI backend, reached through a REST API contract with 19 documented endpoints.",
@@ -631,29 +639,43 @@ export const PROJECTS: Project[] = [
     ],
     projectUrl: PLACEHOLDER_URL,
     demoUrl: PLACEHOLDER_URL,
-    image: "/projects/eventease.png",
+    image: eventeaseCover,
   },
   {
     name: "CloudNap",
-    type: "Mobile app",
-    description: "Simple, personal sleep tracker with a nightly sleep score.",
-    overview:
-      "A simple and personal sleep-tracking app. It turns each night into a sleep score and summaries that make it easier to see your sleep patterns and build better habits.",
-    highlights: [
-      "Nightly sleep score with last night's duration, bedtime and wake time",
-      "Daily and monthly sleep summaries with trends",
-      "Sleep tracker and bedtime reminders",
+    type: "Mobile & wearable app",
+    description: "Sleep tracker for phone and smartwatch that helps busy people understand and improve their sleep.",
+    overview: [
+      "CloudNap is a sleep tracking app for people with busy routines who still wake up tired even when they get enough hours of sleep. It helps users understand what affects their sleep quality and build better bedtime habits. The design was made for smartphone and smartwatch, with dark mode for use at night.",
+      "The design followed a full human-centered process: Value Proposition Canvas, user interviews, three personas (students, working professionals and stay-at-home mothers), user journey mapping, task analysis, information architecture, wireframes and a high-fidelity clickable prototype. The final design reached a System Usability Scale (SUS) score of 74.64 (\"Good\") from 21 respondents.",
     ],
-    contributions: [CONTRIBUTIONS_TBA],
+    role: "UI/UX Designer",
+    highlights: [
+      "Contextual bedtime reminder",
+      "Automatic sleep tracking",
+      "Daily and monthly sleep summaries with a sleep score",
+      "Sleep journal",
+      "Smart alarm with a wake-up window",
+    ],
+    contributionsLabel: "Design process",
+    contributions: [
+      "Conducted user interviews and turned the findings into personas and pain points for three target segments.",
+      "Mapped user journeys and task analyses for five core features to find friction points in each flow.",
+      "Designed the information architecture and sitemap, from onboarding to every feature reachable from the bottom navigation bar.",
+      "Designed low-fidelity wireframes and high-fidelity prototypes in Figma for both mobile and smartwatch.",
+      "Ran usability testing with 5 participants and iterated on the design based on the findings: added a label explaining the sleep score, improved text contrast, made day selection in the bedtime reminder easier, and added customizable distraction options in the sleep journal.",
+      "Ran a SUS evaluation with 21 respondents and scored 74.64 (\"Good\"), confirming overall usability.",
+    ],
+    tech: ["Figma"],
     projectUrl: PLACEHOLDER_URL,
     demoUrl: PLACEHOLDER_URL,
-    image: "/projects/cloudnap.png",
+    image: cloudnapCover,
   },
   {
     name: "HerRoute",
     context: "SISTECH by RISTEK 2026",
     type: "Web app",
-    description: "Safe route app that predicts location risk around transit stations to help women travel safely.",
+    description: "Safety app that predicts how risky a spot is at any hour and suggests safer routes for women.",
     overview: [
       "HerRoute is a safety app that helps women move around the city more safely, day or night. It shows how risky a location is at a given hour, suggests a safer route between two points, finds nearby safe places such as police posts, pharmacies and minimarkets, and lets users report incidents anonymously.",
       "It was built by a team of two for the SISTECH by RISTEK 2026 MLOps final project. There was no public crime data for Jakarta, so the model was trained on Chicago crime data, with Chicago's CTA rail stations standing in for Jakarta's MRT stations. Jakarta coordinates are then mapped onto the Chicago grid for the demo. The system has two parts: a machine learning pipeline in Jupyter notebooks, and a FastAPI backend that serves the model and uses Supabase for auth and data.",
@@ -806,6 +828,6 @@ export const PROJECTS: Project[] = [
     ],
     projectUrl: "https://github.com/SISTECH26-FINPRO5/BE-HerRoute",
     demoUrl: PLACEHOLDER_URL,
-    image: "/projects/herroute.png",
+    image: herrouteCover,
   },
 ];

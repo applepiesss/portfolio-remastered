@@ -146,7 +146,7 @@ export const ProjectModal = ({ project, onClose }: { project: Project | null; on
           <div className="relative mt-9 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
             <div className="relative flex items-center gap-2.5">
               <PixelArt bitmap={SWIRL} className="size-4 text-brand" />
-              <h4 className="font-mono text-[11px] uppercase tracking-[0.15em] text-brand">My contributions</h4>
+              <h4 className="font-mono text-[11px] uppercase tracking-[0.15em] text-brand">{project.contributionsLabel ?? "My contributions"}</h4>
             </div>
             <ol className="relative mt-5 grid gap-y-5">
               {project.contributions.map((c, i) => (

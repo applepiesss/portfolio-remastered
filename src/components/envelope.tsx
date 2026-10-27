@@ -28,6 +28,14 @@ const SEAL_PARTICLES = Array.from({ length: 10 }, (_, i) => {
 // Envelope geometry in a 100 x 62.5 box (16:10); the flap's tip sits at y = 34
 const FLAP_TIP = 34;
 const HEIGHT = 62.5;
+// The V is rounded off at the tip: its edges stop TIP_ROUND units short (horizontally) and meet in a curve
+const TIP_ROUND = 7;
+const TIP_EDGE_Y = FLAP_TIP - TIP_ROUND * (FLAP_TIP / 50);
+// Lowest point of that curve, where the seal sits
+const TIP_Y = (TIP_EDGE_Y + FLAP_TIP) / 2;
+const TIP_CURVE = `L${50 + TIP_ROUND},${TIP_EDGE_Y} Q50,${FLAP_TIP} ${50 - TIP_ROUND},${TIP_EDGE_Y}`;
+// Same corner radius for every layer, so the flap and pocket line up with the rounded back
+const CORNER = "0.75rem";
 
 // The paper is a landscape crop (√2 : 1) of the image, anchored to its top
 const PAPER_CROP = "aspect-[1.414] object-cover object-top";
@@ -71,10 +79,10 @@ export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadH
             toggle();
           }
         }}
-        className="group relative aspect-[16/10] cursor-pointer select-none [perspective:900px] outline-none focus-visible:ring-2 focus-visible:ring-brand/50 rounded-lg"
+        className="group relative aspect-[16/10] cursor-pointer select-none [perspective:900px] outline-none focus-visible:ring-2 focus-visible:ring-brand/50 rounded-xl"
       >
         {/* Back of the envelope */}
-        <div className="absolute inset-0 rounded-lg bg-[#121215] border border-white/10 transition-colors duration-300 group-hover:border-brand/40" />
+        <div className="absolute inset-0 rounded-xl bg-[#121215] border border-white/10 transition-colors duration-300 group-hover:border-brand/40" />
 
         {/* Paper: hidden inside until opened, then peeks out of the top; clicking it opens the lightbox */}
         <div
@@ -95,8 +103,13 @@ export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadH
 
         {/* Front pocket (covers everything below the flap's V). The <svg> box itself ignores the pointer so
             clicks in the open V reach the paper; only the painted pocket shape is clickable */}
-        <svg viewBox={`0 0 100 ${HEIGHT}`} preserveAspectRatio="none" className="absolute inset-0 size-full z-20 overflow-visible pointer-events-none">
-          <path d={`M0,0 L50,${FLAP_TIP} L100,0 L100,${HEIGHT} L0,${HEIGHT} Z`} fill="#17171b" className="pointer-events-auto" />
+        <svg
+          viewBox={`0 0 100 ${HEIGHT}`}
+          preserveAspectRatio="none"
+          className="absolute inset-0 size-full z-20 pointer-events-none"
+          style={{ clipPath: `inset(0 round ${CORNER})` }}
+        >
+          <path d={`M100,0 ${TIP_CURVE} L0,0 L0,${HEIGHT} L100,${HEIGHT} Z`} fill="#17171b" className="pointer-events-auto" />
           <path d={`M0,${HEIGHT} L42,${FLAP_TIP - 4} M100,${HEIGHT} L58,${FLAP_TIP - 4}`} fill="none" stroke="rgba(255,255,255,0.06)" vectorEffect="non-scaling-stroke" />
         </svg>
 
@@ -106,6 +119,7 @@ export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadH
           preserveAspectRatio="none"
           className="absolute inset-x-0 top-0 w-full origin-top transition-transform duration-500 ease-in-out pointer-events-none"
           style={{
+            clipPath: `inset(0 round ${CORNER} ${CORNER} 0 0)`,
             height: `${(FLAP_TIP / HEIGHT) * 100}%`,
             transform: open ? "rotateX(180deg)" : "rotateX(0deg)",
             zIndex: open ? 5 : 30,
@@ -113,11 +127,11 @@ export const Envelope = ({ src, alt, name, to, title, subtitle, badge, downloadH
             transitionDelay: open ? "0ms, 250ms" : "250ms, 250ms",
           }}
         >
-          <path d={`M0,0 L100,0 L50,${FLAP_TIP} Z`} fill="#1c1c21" stroke="rgba(255,255,255,0.1)" vectorEffect="non-scaling-stroke" className="pointer-events-auto" />
+          <path d={`M0,0 L100,0 ${TIP_CURVE} Z`} fill="#1c1c21" stroke="rgba(255,255,255,0.1)" vectorEffect="non-scaling-stroke" className="pointer-events-auto" />
         </svg>
 
         {/* Pixel-swirl seal, bursts into pixels on open */}
-        <div className="absolute left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ top: `${(FLAP_TIP / HEIGHT) * 100}%` }}>
+        <div className="absolute left-1/2 z-40 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{ top: `${(TIP_Y / HEIGHT) * 100}%` }}>
           <PixelArt
             bitmap={SEAL}
             className={`w-7 text-brand transition-all duration-200 ${open ? "scale-150 opacity-0" : "group-hover:animate-[envelope-wiggle_400ms_steps(4)_infinite]"}`}
