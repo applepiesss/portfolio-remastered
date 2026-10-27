@@ -88,10 +88,7 @@ export const ProjectModal = ({ project, onClose }: { project: Project | null; on
 
           {/* Links in the theme color with an always-visible redirect icon; underline grows on hover */}
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-            {[
-              { label: "Project", href: project.projectUrl },
-              { label: "Demo", href: project.demoUrl },
-            ].map((link) => (
+            {project.links.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
