@@ -167,7 +167,7 @@ const StickerItem = ({ sticker }: { sticker: Sticker }) => {
         <span className="sticker-curl" aria-hidden="true" />
       </button>
 
-      <Lightbox src={sticker.certificate} alt={`${sticker.status} certificate — ${sticker.event}`} open={open} onClose={close} credentialHref={sticker.credentialUrl} />
+      <Lightbox src={sticker.certificate} alt={`${sticker.status} certificate for ${sticker.event}`} open={open} onClose={close} credentialHref={sticker.credentialUrl} />
     </>
   );
 };

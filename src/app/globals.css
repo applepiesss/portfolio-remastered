@@ -339,52 +339,41 @@
 }
 
 
-/* Tech stack orbit: rings spin, logos counter-spin to stay upright */
-.orbit-ring,
-.orbit-counter {
-  animation-name: orbit-spin;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+/* Tech stack waves: each layer slides sideways while its logos bob on a shared sine */
+.wave-track {
+  animation: wave-slide linear infinite;
 }
 
-/* The logo is centered on the counter-spinner's top-left corner, so spin around that point */
-.orbit-counter {
-  transform-origin: 0 0;
+.wave-bob {
+  animation: wave-bob 3s ease-in-out infinite;
 }
 
-/* Only the ring holding the hovered/focused logo pauses; the other keeps spinning */
-.orbit-ring:has(.orbit-logo:hover),
-.orbit-ring:has(.orbit-logo:hover) .orbit-counter,
-.orbit-ring:has(.orbit-logo:focus-visible),
-.orbit-ring:has(.orbit-logo:focus-visible) .orbit-counter {
+/* Only the layer holding the hovered/focused logo pauses; the others keep moving */
+.wave-row:has(.wave-logo:hover) :is(.wave-track, .wave-bob),
+.wave-row:has(.wave-logo:focus-visible) :is(.wave-track, .wave-bob) {
   animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orbit-ring,
-  .orbit-counter {
+  .wave-track,
+  .wave-bob {
     animation-play-state: paused;
   }
 }
 
-.orbit-core svg {
-  transition: scale 300ms ease-out;
-}
-
-.orbit-core:hover svg {
-  scale: 1.15;
-  animation: orbit-core-spin 900ms steps(4, end) infinite;
-}
-
-@keyframes orbit-core-spin {
+@keyframes wave-slide {
   to {
-    transform: rotate(360deg);
+    transform: translateX(-50%);
   }
 }
 
-@keyframes orbit-spin {
-  to {
-    transform: rotate(360deg);
+@keyframes wave-bob {
+  0%,
+  100% {
+    transform: translateY(calc(var(--wave-amp) * -1));
+  }
+  50% {
+    transform: translateY(var(--wave-amp));
   }
 }
 

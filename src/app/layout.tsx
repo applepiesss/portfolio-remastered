@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nadia Aisyah Fazila — Portfolio",
+  title: "Nadia Aisyah Fazila | Portfolio",
   description:
     "Computer Science student at Universitas Indonesia building across backend systems and frontend interfaces.",
 };

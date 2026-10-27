@@ -1198,7 +1198,7 @@ export const createAnimation = (
 };
 
 /**
- * Skiper 26 Theme_buttons_002 — React + CSS + transition view api  https://developer.chrome.com/docs/web-platform/view-transitions/
+ * Skiper 26 Theme_buttons_002: React + CSS + transition view api  https://developer.chrome.com/docs/web-platform/view-transitions/
  * Orignal concept from rudrodip
  * Inspired by from https://github.com/rudrodip/theme-toggle-effect
  * We respect the original creators. This is an inspired rebuild with our own taste and does not claim any ownership.
