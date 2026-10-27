@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nadia's Portfolio
 
-## Getting Started
+My personal portfolio: a single-page site about who I am, what I've worked on and what I've built.
+I'm Nadia Aisyah Fazila, a Computer Science student at Universitas Indonesia.
 
-First, run the development server:
+![The About section of the portfolio, with the resume envelope and the side navigation](docs/screenshot.png)
+
+## Sections
+
+| Section | What's in it |
+| --- | --- |
+| **About** | A short intro, my links, and my resume in an envelope you can open |
+| **Experience** | Organizations and roles I've been part of |
+| **Skills** | My tech stack as layered waves of logos, one layer per category |
+| **Projects** | A draggable carousel; each card opens a pop-up with the full write-up, my role, my contributions and links |
+| **Writing** | Articles (coming soon) |
+| **Achievements** | Stickers you can peel to see the certificate |
+
+## Little details
+
+- **Three color themes.** Hold down anywhere on the background to switch between pink, blue and purple.
+- **Pixel art.** The seal, icons and award star are drawn as pixel bitmaps in the theme color.
+- **Resume envelope.** Click to break the seal and slide the resume out, then click the paper to view or download it.
+- **Peelable stickers.** Achievements peel at the corner on hover and open the certificate on click.
+
+## Built with
+
+- [Next.js 16](https://nextjs.org) (App Router) and React 19
+- TypeScript
+- Tailwind CSS 4
+- Framer Motion
+- [simple-icons](https://simpleicons.org) for the tech logos, [Lucide](https://lucide.dev) for UI icons
+- Sora and Geist Mono fonts
+
+## Running it locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # ESLint
+```
 
-## Learn More
+## Updating the content
 
-To learn more about Next.js, take a look at the following resources:
+Most of the content is plain data, so updating it doesn't touch any components:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| What | Where |
+| --- | --- |
+| Projects (write-ups, roles, links, covers) | [`src/lib/projects.ts`](src/lib/projects.ts) |
+| Tech stack | [`src/lib/tech-stack.ts`](src/lib/tech-stack.ts) |
+| Color themes | [`src/lib/themes.ts`](src/lib/themes.ts) |
+| Links, experience, articles and achievements | the arrays at the top of [`src/app/page.tsx`](src/app/page.tsx) |
+| Project covers, certificates and resume | [`public/`](public) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Project covers are imported in `projects.ts` rather than referenced by path, so replacing an image under `public/projects` with a file of the same name shows up right away.
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/            # page, layout and global styles
+├── components/     # envelope, project carousel and pop-up, tech stack, stickers, pixel art
+│   └── ui/         # flickering grid, text decode and Skiper UI components
+└── lib/            # content data: projects, tech stack, themes
+public/             # images, certificates and the resume PDF
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Credits
+
+Some interactions are adapted from [Skiper UI](https://skiper-ui.com) components (theme toggle, animated links and the side navigation), credited in their source files.
