@@ -34,16 +34,15 @@ export type Project = {
   /** Title of that box, "My contributions" unless set (e.g. "Design process" for a solo design project) */
   contributionsLabel?: string;
   tech?: string[];
-  /** Repository / project page and live demo, shown as links in the pop-up */
-  projectUrl: string;
-  demoUrl: string;
+  /** Repositories, demo video and so on, shown in this order as links in the pop-up */
+  links: { label: string; href: string }[];
   /** Optional award, shown as a small badge in the pop-up */
   award?: string;
   /** Cover image from /public/projects, imported so its URL changes whenever the file does */
   image: StaticImageData;
 };
 
-// Placeholder until the real project and demo links are ready
+// Placeholder until the real link is ready
 const PLACEHOLDER_URL = "http://localhost:3000";
 
 // Shown in this order in the Projects carousel
@@ -185,8 +184,11 @@ export const PROJECTS: Project[] = [
       "Bitrise",
     ],
     award: "Best Application & Favorite App, PBP Awards 2025",
-    projectUrl: PLACEHOLDER_URL,
-    demoUrl: "https://jaysen-lestari-ligapass.pbp.cs.ui.ac.id/",
+    links: [
+      { label: "Web repository", href: "https://github.com/PBP-C-06/LigaPass" },
+      { label: "Mobile repository", href: "https://github.com/PBP-C-06/LigaPass-mobile" },
+      { label: "Demo", href: "https://www.youtube.com/watch?v=EvyftGBOIik" },
+    ],
     image: ligapassCover,
   },
   {
@@ -342,8 +344,9 @@ export const PROJECTS: Project[] = [
       "Grafana",
       "JMeter",
     ],
-    projectUrl: PLACEHOLDER_URL,
-    demoUrl: PLACEHOLDER_URL,
+    links: [
+      { label: "Repository", href: "https://github.com/advprog-2026-A7-project/mysawit-harvest-service" },
+    ],
     image: mysawitCover,
   },
   {
@@ -513,8 +516,10 @@ export const PROJECTS: Project[] = [
       "PostgreSQL",
       "GitHub Actions",
     ],
-    projectUrl: "https://github.com/pandoruy-pingin-menang-pls/blusukan-fe",
-    demoUrl: PLACEHOLDER_URL,
+    links: [
+      { label: "Repository", href: "https://github.com/pandoruy-pingin-menang-pls/blusukan-fe" },
+      { label: "Demo", href: "https://www.youtube.com/watch?v=YFIQSkuMTME" },
+    ],
     image: blusukanCover,
   },
   {
@@ -637,8 +642,10 @@ export const PROJECTS: Project[] = [
       "Tailwind CSS",
       "FastAPI",
     ],
-    projectUrl: PLACEHOLDER_URL,
-    demoUrl: PLACEHOLDER_URL,
+    links: [
+      { label: "Repository", href: "https://github.com/NAKBK/FE-EventEase" },
+      { label: "Demo", href: "https://drive.google.com/file/d/1X6RR5XJMxvq9yBBGi21dXcAwyIZDU3iv/view" },
+    ],
     image: eventeaseCover,
   },
   {
@@ -667,8 +674,9 @@ export const PROJECTS: Project[] = [
       "Ran a SUS evaluation with 21 respondents and scored 74.64 (\"Good\"), confirming overall usability.",
     ],
     tech: ["Figma"],
-    projectUrl: PLACEHOLDER_URL,
-    demoUrl: PLACEHOLDER_URL,
+    links: [
+      { label: "Figma", href: PLACEHOLDER_URL },
+    ],
     image: cloudnapCover,
   },
   {
@@ -826,8 +834,9 @@ export const PROJECTS: Project[] = [
       "PostgreSQL",
       "Google Colab",
     ],
-    projectUrl: "https://github.com/SISTECH26-FINPRO5/BE-HerRoute",
-    demoUrl: PLACEHOLDER_URL,
+    links: [
+      { label: "Repository", href: "https://github.com/SISTECH26-FINPRO5/BE-HerRoute" },
+    ],
     image: herrouteCover,
   },
 ];
