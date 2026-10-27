@@ -4,6 +4,8 @@ import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
 import { Envelope } from "@/components/envelope";
 import { TechStack } from "@/components/tech-stack";
+import { ProjectCarousel } from "@/components/project-carousel";
+import { PROJECTS } from "@/lib/projects";
 import { N4dsLogo } from "@/components/n4ds-logo";
 import { TextDecode } from "@/components/ui/text-decode";
 import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
@@ -33,7 +35,7 @@ const experiences = [
   {
     role: "Staff of Business Development",
     org: "SIWAK-NG",
-    period: "Sep 2025 — Oct 2025",
+    period: "Sep 2025 - Oct 2025",
     points: [
       "Managed operational and promotional aspects of paid exam preparation classes",
       "Coordinated communication between tutors and tutees to ensure smooth class delivery",
@@ -43,7 +45,7 @@ const experiences = [
   {
     role: "Staff of Product Management Academy",
     org: "COMPFEST",
-    period: "Apr 2025 — Oct 2025",
+    period: "Apr 2025 - Oct 2025",
     points: [
       "Contributed to execution of a Product Management Academy",
       "Handled event operations as MC and operator across academy sessions",
@@ -54,7 +56,7 @@ const experiences = [
   {
     role: "Mentor",
     org: "Dasar-Dasar Pemrograman 0",
-    period: "Jul 2025 — Sep 2025",
+    period: "Jul 2025 - Sep 2025",
     points: [
       "Facilitated foundational Python and programming logic learning for first-year Computer Science students",
       "Guided learners through complex problems using structured lessons and hands-on exercises",
@@ -168,14 +170,14 @@ export default function Home() {
       <ThemeHoldArea className="relative flex flex-col h-full w-full p-4 sm:p-8 md:p-12 lg:p-16 overflow-hidden">
         {/* Background Grid: only the active theme's grid shows (see globals.css); faded toward the center so the motion frames the content instead of competing with it */}
         {gridThemes.map(({ theme, color }) => (
-          <div key={theme} className={`bg-grid-${theme} absolute inset-0 z-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,rgba(0,0,0,0.55)_10%,black_65%)]`}>
+          <div key={theme} className={`bg-grid-${theme} absolute inset-0 z-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,rgba(0,0,0,0.8)_10%,black_60%)]`}>
             <FlickeringGrid
               className="w-full h-full"
               squareSize={3}
               gridGap={5}
               color={color}
-              maxOpacity={0.6}
-              flickerChance={0.12}
+              maxOpacity={0.85}
+              flickerChance={0.2}
             />
           </div>
         ))}
@@ -193,9 +195,10 @@ export default function Home() {
                 <div>
                   <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
                   <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
-                    Hi, I&apos;m Nadia — a Computer Science student at Universitas Indonesia who learns best by building.
-                    I enjoy working across the stack, from backend systems to frontend interfaces, with a focus on
-                    understanding how things work and growing with every project I take on.
+                    Hi, I&apos;m Nadia! I&apos;m a Computer Science student at Universitas Indonesia, still early on and
+                    enjoying every bit of it. I learn by doing, which mostly means building something, getting stuck, and
+                    somehow figuring it out at 2 a.m. I&apos;ve made a few web and mobile apps so far, and each one taught
+                    me something I didn&apos;t expect.
                   </p>
 
                   {/* Links */}
@@ -271,13 +274,7 @@ export default function Home() {
             {/* Projects Section */}
             <section id="projects" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading index="04" label="Projects" title="Selected projects" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Project 01", "Project 02"].map((project) => (
-                  <div key={project} className="h-56 bg-white/[0.02] border border-white/10 rounded-lg flex items-center justify-center hover:border-brand/40 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer">
-                    <span className="font-mono text-xs text-white/30">{project}</span>
-                  </div>
-                ))}
-              </div>
+              <ProjectCarousel projects={PROJECTS} />
             </section>
 
             <hr className="border-t border-white/10" />
@@ -331,7 +328,7 @@ export default function Home() {
                   Nadia
                 </div>
                 <div className="flex justify-center mt-1.5">
-                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS @ Universitas Indonesia</Link001>
+                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS Student @ UI</Link001>
                 </div>
               </div>
 
