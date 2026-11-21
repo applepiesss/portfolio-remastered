@@ -2,7 +2,7 @@ import { ReactionGrid, type ReactionLook, type ReactionPattern } from "@/compone
 import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
-import { Envelope } from "@/components/envelope";
+import { ResumeStack } from "@/components/resume-stack";
 import { TechStack } from "@/components/tech-stack";
 import { ProjectCarousel } from "@/components/project-carousel";
 import { PROJECTS } from "@/lib/projects";
@@ -219,11 +219,12 @@ export default function Home() {
 
             {/* About Me Section */}
             <section id="about" className="px-6 md:px-14 lg:px-20 pt-12 md:pt-20 pb-14 md:pb-20">
-              {/* Heading + bio + links form one column; the envelope is centered against all of it */}
-              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_270px] gap-10 2xl:gap-12 items-center">
+              {/* Heading + bio + links form one wide column; the resume sits centred in the space to its
+                  right (not pinned to the far edge), so there is no big gap in the middle */}
+              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,56rem)_minmax(270px,1fr)] gap-10 2xl:gap-12 items-center">
                 <div>
                   <SectionHeading title="Nadia Aisyah Fazila" hero />
-                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl 2xl:max-w-none">
                     Hi, I&apos;m Nadia! I&apos;m a Computer Science student at Universitas Indonesia, still early on and
                     enjoying every bit of it. I learn by doing, which mostly means building something, getting stuck, and
                     somehow figuring it out at 2 a.m. I&apos;ve made a few web and mobile apps so far, and each one taught
@@ -245,20 +246,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Resume, delivered in an envelope. The top padding reserves the space the paper peeks into
-                    when opened (~19% of the envelope width), so the open state is what gets centered */}
-                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:max-w-none 2xl:pt-[19%]">
-                  <Envelope
-                    src="/resume-preview.jpg"
-                    alt="Resume of Nadia Aisyah Fazila, page 1"
-                    name="resume"
-                    to="recruiters"
-                    title="Nadia's Resume"
-                    subtitle="PDF · 2 pages"
+                {/* Resume as two loose pages that fan out on hover */}
+                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:w-[270px] 2xl:justify-self-center">
+                  <ResumeStack
+                    pages={[
+                      { src: "/resume-page-1.jpg", alt: "Resume of Nadia Aisyah Fazila, page 1" },
+                      { src: "/resume-page-2.jpg", alt: "Resume of Nadia Aisyah Fazila, page 2" },
+                    ]}
                     downloadHref="/CV_NadiaAisyahFazila.pdf"
-                    downloadPrompt="download my resume to unlock more"
                   />
-                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-3 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
+                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-8 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
                     <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
                   </a>
                 </div>

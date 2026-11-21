@@ -293,31 +293,6 @@
   }
 }
 
-/* Pixel particles for the envelope seal; steps() keeps the retro sprite feel */
-.theme-burst-particle {
-  position: absolute;
-  left: calc(var(--w) / -2);
-  top: calc(var(--h) / -2);
-  width: var(--w);
-  height: var(--h);
-  opacity: 0;
-  animation: theme-particle-fly var(--burst-ms) steps(12, end) forwards;
-}
-
-@keyframes theme-particle-fly {
-  0% { opacity: 1; transform: translate(0, 0); }
-  70% { opacity: 1; }
-  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
-}
-
-
-/* Envelope seal wiggle on hover */
-@keyframes envelope-wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-8deg); }
-  75% { transform: rotate(8deg); }
-}
-
 /* Achievement stickers: resting tilt, corner peel on hover, full peel on click */
 .sticker {
   --peel: 0px;
