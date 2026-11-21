@@ -16,10 +16,11 @@ const navigationItems = [
 
 export const Skiper58 = () => {
   return (
-    <ul className="flex flex-row md:flex-col items-center justify-center gap-5 md:gap-6 w-full py-2 md:py-0 flex-wrap">
+    <ul className="flex flex-row items-center justify-start lg:justify-center gap-5 md:gap-7 w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
       {navigationItems.map((item, index) => (
         <li
-          className="relative flex cursor-pointer flex-col items-center overflow-visible"
+          className="relative flex shrink-0 cursor-pointer flex-col items-center overflow-visible whitespace-nowrap"
           key={index}
         >
           <a href={item.href} className="relative flex items-start text-white/50 hover:text-brand transition-colors duration-300">
