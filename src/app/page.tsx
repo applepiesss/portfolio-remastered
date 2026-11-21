@@ -255,7 +255,7 @@ export default function Home() {
                     ]}
                     downloadHref="/CV_NadiaAisyahFazila.pdf"
                   />
-                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-8 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
+                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mx-auto mt-8 flex w-fit items-center gap-2 text-sm font-medium text-white/80 hover:text-brand transition-colors duration-300">
                     <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
                   </a>
                 </div>
