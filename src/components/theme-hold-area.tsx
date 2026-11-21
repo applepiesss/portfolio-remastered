@@ -9,46 +9,34 @@ const HOLD_MS = 650;
 const POP_MS = 900;
 const SPREAD_MS = 1400;
 const MOVE_TOLERANCE = 12;
-const BUBBLE_SIZE = 56;
 
-// Water droplets flung out when the bubble pops; they arc outward, then fall
-type Droplet = { dx: number; dy: number; size: number; delay: number };
-// Tiny bubbles that drift up and away after the pop
-type MiniBubble = { dx: number; rise: number; size: number; delay: number };
-type Press = {
-  x: number;
-  y: number;
-  color: string;
-  key: number;
-  phase: "holding" | "popping";
-  droplets: Droplet[];
-  minis: MiniBubble[];
-};
+// Dotted bubble: 3px squares like the background grid, spaced around a circle that grows while holding
+const BUBBLE_RADIUS = 18;
+// Keeps the dots about 8px apart around the outline, like the background grid
+const DOTS = 14;
+// A short arc of dots inside the upper left, so the ring reads as a bubble rather than a hoop
+const SHINE = [
+  { angle: 200, radius: 0.62 },
+  { angle: 218, radius: 0.66 },
+  { angle: 236, radius: 0.62 },
+];
 
-const makeDroplets = (): Droplet[] =>
-  Array.from({ length: 14 }, (_, i) => {
-    const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
-    const distance = BUBBLE_SIZE * 0.55 + Math.random() * 28;
-    return {
-      dx: Math.cos(angle) * distance,
-      dy: Math.sin(angle) * distance,
-      size: 2.5 + Math.random() * 3,
-      delay: Math.random() * 60,
-    };
-  });
+type Dot = { angle: number; fly: number; delay: number };
 
-const makeMinis = (): MiniBubble[] =>
-  Array.from({ length: 5 }, () => ({
-    dx: (Math.random() - 0.5) * 80,
-    rise: 50 + Math.random() * 50,
-    size: 6 + Math.random() * 7,
-    delay: 40 + Math.random() * 160,
+// Each dot of the outline flies a different distance when the bubble pops, so it reads as a burst
+const makeDots = (): Dot[] =>
+  Array.from({ length: DOTS }, (_, i) => ({
+    angle: (i / DOTS) * 360,
+    fly: 18 + Math.random() * 30,
+    delay: Math.random() * 60,
   }));
+
+type Press = { x: number; y: number; color: string; key: number; phase: "holding" | "popping"; dots: Dot[] };
 
 /**
  * Press and hold anywhere on the background (outside elements marked
- * `data-no-theme-hold`) to cycle the theme. A soap bubble grows under the pointer while holding,
- * pops into droplets and tiny bubbles, and the new theme spreads out from that point.
+ * `data-no-theme-hold`) to cycle the theme. A bubble outlined in dots grows and wobbles under the
+ * pointer while holding, then pops: its dots burst outward and fade as the new theme spreads from that point.
  */
 export const ThemeHoldArea = ({ className, children }: { className?: string; children: React.ReactNode }) => {
   const [press, setPress] = useState<Press | null>(null);
@@ -100,12 +88,12 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     const { clientX: x, clientY: y } = e;
 
     origin.current = { x, y };
-    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, phase: "holding", droplets: [], minis: [] });
+    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, phase: "holding", dots: makeDots() });
     timer.current = window.setTimeout(() => {
       timer.current = null;
       origin.current = null;
       busy.current = true;
-      flushSync(() => setPress((p) => p && { ...p, phase: "popping", droplets: makeDroplets(), minis: makeMinis() }));
+      flushSync(() => setPress((p) => p && { ...p, phase: "popping" }));
       spreadTheme(next, x, y);
       window.setTimeout(() => {
         setPress(null);
@@ -133,35 +121,38 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     >
       {children}
 
-      {/* Own view-transition layer so the bubble and droplets stay visible above the spreading theme */}
+      {/* Own view-transition layer so the bubble stays visible above the spreading theme */}
       <div className="theme-burst-layer" aria-hidden="true">
         {press && (
           <div
             key={press.key}
             className={`theme-burst ${press.phase === "popping" ? "is-popping" : ""}`}
-            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--pop-ms": `${POP_MS}ms`, "--bubble": `${BUBBLE_SIZE}px` } as React.CSSProperties}
+            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--pop-ms": `${POP_MS}ms` } as React.CSSProperties}
           >
-            <span className="theme-bubble">
-              <span className="theme-bubble-film" />
-            </span>
-
-            {press.phase === "popping" && <span className="theme-bubble-ring" />}
-
-            {press.droplets.map((d, i) => (
-              <span
-                key={`d${i}`}
-                className="theme-bubble-drop"
-                style={{ "--dx": `${d.dx}px`, "--dy": `${d.dy}px`, "--s": `${d.size}px`, animationDelay: `${d.delay}ms` } as React.CSSProperties}
-              />
-            ))}
-
-            {press.minis.map((m, i) => (
-              <span
-                key={`m${i}`}
-                className="theme-bubble-mini"
-                style={{ "--dx": `${m.dx}px`, "--rise": `${m.rise}px`, "--s": `${m.size}px`, animationDelay: `${m.delay}ms` } as React.CSSProperties}
-              />
-            ))}
+            <div className="theme-dot-bubble" style={{ "--bubble-max": `${BUBBLE_RADIUS}px` } as React.CSSProperties}>
+              {press.dots.map((dot, i) => (
+                <span
+                  key={i}
+                  className="theme-dot"
+                  style={
+                    {
+                      "--angle": `${dot.angle}deg`,
+                      "--fly": `${dot.fly}px`,
+                      // Wobble delay follows the angle, so a gentle wave runs around the outline
+                      "--wobble-delay": `${-(dot.angle / 360) * 900}ms`,
+                      "--pop-delay": `${dot.delay}ms`,
+                    } as React.CSSProperties
+                  }
+                />
+              ))}
+              {SHINE.map((shine, i) => (
+                <span
+                  key={`s${i}`}
+                  className="theme-dot is-shine"
+                  style={{ "--angle": `${shine.angle}deg`, "--shine": shine.radius, "--fly": "10px", "--pop-delay": "0ms" } as React.CSSProperties}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
