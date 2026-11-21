@@ -334,49 +334,33 @@
   filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.55));
 }
 
-/* Pixel decor stickers get a white die-cut outline */
-.sticker-decor {
-  filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
+/* Tech stack ticker: each row slides by half its width (one copy) for a seamless loop */
+.tech-ticker {
+  animation: tech-ticker linear infinite;
 }
 
-
-/* Tech stack waves: each layer slides sideways while its logos bob on a shared sine */
-.wave-track {
-  animation: wave-slide linear infinite;
-}
-
-.wave-bob {
-  animation: wave-bob 3s ease-in-out infinite;
-}
-
-/* Only the layer holding the hovered/focused logo pauses; the others keep moving */
-.wave-row:has(.wave-logo:hover) :is(.wave-track, .wave-bob),
-.wave-row:has(.wave-logo:focus-visible) :is(.wave-track, .wave-bob) {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .wave-track,
-  .wave-bob {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes wave-slide {
+@keyframes tech-ticker {
   to {
     transform: translateX(-50%);
   }
 }
 
-@keyframes wave-bob {
-  0%,
-  100% {
-    transform: translateY(calc(var(--wave-amp) * -1));
-  }
-  50% {
-    transform: translateY(var(--wave-amp));
+/* Hovering a row pauses it so its items are easy to read and point at */
+.group\/row:hover .tech-ticker {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-ticker {
+    animation-play-state: paused;
   }
 }
+
+/* Pixel decor stickers get a white die-cut outline */
+.sticker-decor {
+  filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
+}
+
 
 /* N4ds logo: each letter hangs from its top edge; the swing itself is driven from JS (n4ds-logo.tsx) */
 .n4ds-letter {
