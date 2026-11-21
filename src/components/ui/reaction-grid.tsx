@@ -12,18 +12,18 @@ import { cn } from "@/lib/utils";
  * from ever settling, the feed rate drifts slowly across space and time, new drops are seeded now
  * and then, and small patches get wiped so they regrow.
  *
- * The "cowhide" pattern is the exception: big sparse patches are fragile in Gray-Scott (they die
- * out or merge into stripes on small screens), so it uses slowly morphing noise cut at a high
- * level instead, which always gives cow-print patches.
+ * The "swirl" pattern is the exception: it is not simulated but drawn from a slowly turning,
+ * organically warped spiral (the portfolio's original background), so it can be outlined thinly
+ * like the others.
  */
 
 /** fill: solid shapes; outline: thin lines along the edges; hatch: shapes shaded with thin diagonal lines */
 export type ReactionLook = "fill" | "outline" | "hatch";
 
-export type ReactionPattern = "spots" | "maze" | "coral" | "fingerprint" | "cells" | "cowhide";
+export type ReactionPattern = "spots" | "maze" | "coral" | "fingerprint" | "cells" | "swirl";
 
 // Feed / kill rates for each look (classic Gray-Scott regimes)
-const PATTERNS: Record<Exclude<ReactionPattern, "cowhide">, { feed: number; kill: number }> = {
+const PATTERNS: Record<Exclude<ReactionPattern, "swirl">, { feed: number; kill: number }> = {
   spots: { feed: 0.0367, kill: 0.0649 },
   maze: { feed: 0.029, kill: 0.057 },
   coral: { feed: 0.0545, kill: 0.062 },
@@ -31,11 +31,6 @@ const PATTERNS: Record<Exclude<ReactionPattern, "cowhide">, { feed: number; kill
   cells: { feed: 0.039, kill: 0.058 },
 };
 
-// Cow print: patch size (squares per noise cell), how much of the field counts as a patch,
-// and how fast patches morph (noise units per ms)
-const COW_SIZE = 22;
-const COW_LEVEL = 0.6;
-const COW_DRIFT = 0.00005;
 
 const DIFFUSE_U = 1.0;
 const DIFFUSE_V = 0.5;
@@ -204,39 +199,38 @@ const coverage = (sim: Sim) => {
   return inside / sim.v.length;
 };
 
-// Smooth 3D value noise in [0, 1]; the third axis is time, so patches morph instead of sliding
-const hash = (x: number, y: number, z: number) => {
-  let h = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(z, 1440662683)) | 0;
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
-};
-const smoothstep = (t: number) => t * t * (3 - 2 * t);
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const noise3 = (x: number, y: number, z: number) => {
-  const xi = Math.floor(x);
-  const yi = Math.floor(y);
-  const zi = Math.floor(z);
-  const xf = smoothstep(x - xi);
-  const yf = smoothstep(y - yi);
-  const zf = smoothstep(z - zi);
-  const c = (dx: number, dy: number, dz: number) => hash(xi + dx, yi + dy, zi + dz);
-  return lerp(
-    lerp(lerp(c(0, 0, 0), c(1, 0, 0), xf), lerp(c(0, 1, 0), c(1, 1, 0), xf), yf),
-    lerp(lerp(c(0, 0, 1), c(1, 0, 1), xf), lerp(c(0, 1, 1), c(1, 1, 1), xf), yf),
-    zf,
-  );
-};
+// How tightly the swirl winds; the original filled background used 0.08, the outlined one is
+// wound twice as tight so more arms show around the cards
+const SWIRL_TIGHTNESS = 0.16;
 
-// Fills the display field so that its EDGE contour traces the cow patches
-const cowField = (display: Display, now: number) => {
-  const t = now * COW_DRIFT;
-  for (let y = 0; y < display.rows; y++) {
-    const ny = y / COW_SIZE;
-    for (let x = 0; x < display.cols; x++) {
-      const nx = x / COW_SIZE;
-      // A coarse layer for the patch shapes plus a finer one for ragged, irregular edges
-      const n = 0.7 * noise3(nx, ny, t) + 0.3 * noise3(nx * 2.3 + 17, ny * 2.3 + 5, t * 1.4);
-      display.field[y * display.cols + x] = EDGE + (n - COW_LEVEL);
+// The original swirl: a slowly turning spiral whose arms curl, drift and pinch over time.
+// Fills the display field so that its EDGE contour traces the arms' edges as thin lines
+const swirlField = (display: Display, now: number) => {
+  const time = now / 1000;
+  const { cols, rows } = display;
+  const cx = cols / 2;
+  const cy = rows / 2;
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      const dx = i - cx;
+      const dy = j - cy;
+      // Gentle domain warping keeps the spiral organic instead of geometric
+      const warpX = dx + Math.sin(dy * 0.02 + time * 0.1) * 20 + Math.cos(dx * 0.015) * 10;
+      const warpY = dy + Math.cos(dx * 0.02 - time * 0.08) * 20 + Math.sin(dy * 0.015) * 10;
+      const dist = Math.sqrt(warpX * warpX + warpY * warpY);
+      const angle = Math.atan2(warpY, warpX);
+      // Smooth out the centre
+      const effectiveAngle = angle * Math.min(1, dist / 20);
+      // Soft, uneven curls along the arms plus a slow drift. Angle is only ever multiplied by whole
+      // numbers: atan2 jumps by a full turn on the left of the centre, and a fractional multiplier
+      // there tears the pattern into a straight seam. The uneven feel comes from the phase instead
+      const curlAmp = 1 + Math.cos(angle * 2 + time * 0.2) * 2;
+      const curl = Math.cos(angle * 6 + Math.sin(dist * 0.03) * 4 + dist * 0.15 + time * 0.4) * curlAmp;
+      const drift = Math.sin(dist * 0.05 - time * 0.1) * 3;
+      const spiral = Math.cos((dist + curl + drift) * SWIRL_TIGHTNESS - effectiveAngle - time * 0.15);
+      // Arm thickness pinches and swells along the spiral
+      const threshold = -0.1 + Math.sin(angle * 2 + dist * 0.03) * 0.3 + Math.cos(angle * 4 - time * 0.2) * 0.2;
+      display.field[j * cols + i] = EDGE + (spiral - threshold) * 0.5;
     }
   }
 };
@@ -273,7 +267,7 @@ export const ReactionGrid: React.FC<ReactionGridProps> = ({
     const ctx = canvas?.getContext("2d");
     if (!container || !canvas || !ctx) return;
 
-    const procedural = pattern === "cowhide";
+    const procedural = pattern === "swirl";
     const { feed, kill } = procedural ? { feed: 0, kill: 0 } : PATTERNS[pattern];
     const [r, g, b] = toRGB(color);
     const cell = squareSize + gridGap;
@@ -312,12 +306,13 @@ export const ReactionGrid: React.FC<ReactionGridProps> = ({
 
     const draw = (dt: number, now: number) => {
       if (!display) return;
-      if (procedural) cowField(display, now);
+      if (procedural) swirlField(display, now);
       else if (sim) sampleField(sim, display, scale);
       else return;
       const { cols, rows, field: v, flicker, glow } = display;
-      // Ease factor for glow; a first draw (dt = 0) snaps straight to the target
-      const ease = dt === 0 ? 1 : Math.min(1, dt * 7);
+      // Ease factor for glow; a first draw (dt = 0) snaps straight to the target. The swirl moves
+      // continuously, so easing it would only leave faint trails behind its lines
+      const ease = dt === 0 || procedural ? 1 : Math.min(1, dt * 7);
       const size = squareSize * dpr;
       const paths = Array.from({ length: LEVELS + 1 }, () => new Path2D());
       const flickerRoll = flickerChance * dt;
@@ -328,12 +323,16 @@ export const ReactionGrid: React.FC<ReactionGridProps> = ({
           if (Math.random() < flickerRoll) flicker[i] = 0.55 + Math.random() * 0.45;
           let strength: number;
           if (look === "outline") {
-            // Light a square only where the pattern crosses its edge, giving thin contour lines
-            const inside = v[i] > EDGE;
-            const edge =
-              inside !== v[y * cols + ((x + 1) % cols)] > EDGE ||
-              inside !== v[((y + 1) % rows) * cols + x] > EDGE;
-            strength = edge ? 1 : 0;
+            // Light a square only if the contour passes within half a square of its centre.
+            // The distance is estimated from the local slope, so lines stay one square thick in
+            // every direction instead of snapping into straight runs and stair steps along the grid.
+            // Neighbours past the screen edge are clamped, so no false lines run along the border
+            const left = x > 0 ? v[i - 1] : v[i];
+            const right = x + 1 < cols ? v[i + 1] : v[i];
+            const up = y > 0 ? v[i - cols] : v[i];
+            const down = y + 1 < rows ? v[i + cols] : v[i];
+            const slope = Math.hypot((right - left) / 2, (down - up) / 2);
+            strength = slope > 1e-6 && Math.abs(v[i] - EDGE) / slope < 0.5 ? 1 : 0;
           } else if (look === "hatch") {
             // Diagonal lines fixed to the grid; only the shape they fill moves, so nothing jitters
             strength = v[i] > EDGE && (x + y) % HATCH_GAP === 0 ? 1 : 0;

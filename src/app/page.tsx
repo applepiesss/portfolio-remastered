@@ -156,11 +156,11 @@ const SectionHeading =({ title, hero = false }: { title: string; hero?: boolean 
 );
 
 // Each theme grows its own reaction-diffusion pattern, all drawn as thin lines:
-// fingerprint contours, a maze shaded with diagonal hatching, or cow print outlines
+// fingerprint contours, a maze shaded with diagonal hatching, or the outlined swirl
 const gridThemes: { theme: string; color: string; pattern: ReactionPattern; look: ReactionLook; scale?: number }[] = [
   { theme: "pink", color: "#FF7EB9", pattern: "fingerprint", look: "outline" },
   { theme: "blue", color: "#93B8FF", pattern: "maze", look: "hatch" },
-  { theme: "purple", color: "#B794FF", pattern: "cowhide", look: "outline" },
+  { theme: "purple", color: "#B794FF", pattern: "swirl", look: "outline" },
 ];
 
 export default function Home() {
