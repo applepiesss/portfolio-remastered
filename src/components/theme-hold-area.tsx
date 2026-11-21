@@ -3,112 +3,58 @@
 import React, { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
-import { PixelArt, type Bitmap } from "@/components/pixel-art";
 import { THEME_COLORS, THEMES, type PortfolioTheme } from "@/lib/themes";
 
-const HOLD_MS = 600;
-const BURST_MS = 900;
+const HOLD_MS = 650;
+const POP_MS = 900;
 const SPREAD_MS = 1400;
 const MOVE_TOLERANCE = 12;
+const BUBBLE_SIZE = 56;
 
-// Hold shapes, used in this order on successive holds
-const SHAPES = {
-  heart: [
-    ".XX...XX.",
-    "XXXX.XXXX",
-    "XXXXXXXXX",
-    "XXXXXXXXX",
-    ".XXXXXXX.",
-    "..XXXXX..",
-    "...XXX...",
-    "....X....",
-  ],
-  star: [
-    "....X....",
-    "....X....",
-    "...XXX...",
-    "XXXXXXXXX",
-    ".XXXXXXX.",
-    "..XXXXX..",
-    "..XXXXX..",
-    ".XX...XX.",
-    ".X.....X.",
-  ],
-  // Two hollow loops with long trailing ribbons
-  bow: [
-    ".XXX.....XXX.",
-    "X...X...X...X",
-    "X....XXX....X",
-    "X...XXXXX...X",
-    ".XXX.XXX.XXX.",
-    "....XX.XX....",
-    "....XX.XX....",
-    "...XX...XX...",
-    "...XX...XX...",
-    "..XX.....XX..",
-    "..XX.....XX..",
-  ],
-};
-// Particle-sized versions of each shape
-const MINI: Record<keyof typeof SHAPES, string[]> = {
-  heart: ["XX.XX", "XXXXX", ".XXX.", "..X.."],
-  star: ["..X..", "XXXXX", ".XXX.", ".X.X."],
-  bow: ["XX.XX", "X.X.X", "XX.XX", ".X.X."],
-};
-const SHAPE_ORDER = Object.keys(SHAPES) as (keyof typeof SHAPES)[];
-const SPARKLE = [".X.", "XXX", ".X."];
-const PIXEL = ["X"];
-
-const HOLD_CELL = 2.5;
-
-type ShapeName = keyof typeof SHAPES;
-
-// Centered on the press point; pixels light up from the bottom row to the top over HOLD_MS
-const HoldShape = ({ bitmap, burst }: { bitmap: Bitmap; burst: boolean }) => {
-  const w = bitmap[0].length * HOLD_CELL;
-  const h = bitmap.length * HOLD_CELL;
-  return (
-    <span className="theme-hold-shape-wrap" style={{ left: -w / 2, top: -h / 2, width: w, height: h }}>
-      <PixelArt
-        bitmap={bitmap}
-        className={`theme-hold-shape ${burst ? "is-burst" : ""}`}
-        pixelClassName="theme-hold-pixel"
-        rowDelay={(row) => ((bitmap.length - 1 - row) / bitmap.length) * HOLD_MS}
-      />
-    </span>
-  );
+// Water droplets flung out when the bubble pops; they arc outward, then fall
+type Droplet = { dx: number; dy: number; size: number; delay: number };
+// Tiny bubbles that drift up and away after the pop
+type MiniBubble = { dx: number; rise: number; size: number; delay: number };
+type Press = {
+  x: number;
+  y: number;
+  color: string;
+  key: number;
+  phase: "holding" | "popping";
+  droplets: Droplet[];
+  minis: MiniBubble[];
 };
 
-type Particle = { bitmap: Bitmap; cell: number; dx: number; dy: number; delay: number };
-type Press = { x: number; y: number; color: string; key: number; shape: ShapeName; phase: "holding" | "burst"; particles: Particle[] };
-
-// Mix of single pixels, little "+" sparkles and mini versions of the held shape
-const makeParticles = (shape: ShapeName): Particle[] =>
-  Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-    const distance = 50 + Math.random() * 45;
-    const kind = i % 4;
+const makeDroplets = (): Droplet[] =>
+  Array.from({ length: 14 }, (_, i) => {
+    const angle = (i / 14) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
+    const distance = BUBBLE_SIZE * 0.55 + Math.random() * 28;
     return {
-      bitmap: kind === 0 ? MINI[shape] : kind === 2 ? SPARKLE : PIXEL,
-      cell: kind === 0 || kind === 2 ? 1.75 : 2 + Math.round(Math.random()),
       dx: Math.cos(angle) * distance,
       dy: Math.sin(angle) * distance,
-      delay: Math.random() * 80,
+      size: 2.5 + Math.random() * 3,
+      delay: Math.random() * 60,
     };
   });
 
+const makeMinis = (): MiniBubble[] =>
+  Array.from({ length: 5 }, () => ({
+    dx: (Math.random() - 0.5) * 80,
+    rise: 50 + Math.random() * 50,
+    size: 6 + Math.random() * 7,
+    delay: 40 + Math.random() * 160,
+  }));
+
 /**
  * Press and hold anywhere on the background (outside elements marked
- * `data-no-theme-hold`) to cycle the theme. A pixel shape lights up row by row
- * while holding, bursts into pixel sparkles, and the new theme spreads out from that point.
+ * `data-no-theme-hold`) to cycle the theme. A soap bubble grows under the pointer while holding,
+ * pops into droplets and tiny bubbles, and the new theme spreads out from that point.
  */
 export const ThemeHoldArea = ({ className, children }: { className?: string; children: React.ReactNode }) => {
   const [press, setPress] = useState<Press | null>(null);
   const timer = useRef<number | null>(null);
   const origin = useRef<{ x: number; y: number } | null>(null);
   const busy = useRef(false);
-  // Cycles through SHAPE_ORDER on each hold
-  const holdCount = useRef(0);
 
   const cancel = () => {
     if (timer.current) window.clearTimeout(timer.current);
@@ -128,7 +74,7 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
       return;
     }
 
-    // A soft-edged circle (see ::view-transition-new in globals.css) grows from the burst point;
+    // A soft-edged circle (see ::view-transition-new in globals.css) grows from the pop point;
     // its solid core is 70% of the mask size, so the mask must be large enough for that core to cover the far corner
     const reach = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
     const end = (reach / 0.7) * 2;
@@ -154,18 +100,17 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     const { clientX: x, clientY: y } = e;
 
     origin.current = { x, y };
-    const shape = SHAPE_ORDER[holdCount.current++ % SHAPE_ORDER.length];
-    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, shape, phase: "holding", particles: [] });
+    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, phase: "holding", droplets: [], minis: [] });
     timer.current = window.setTimeout(() => {
       timer.current = null;
       origin.current = null;
       busy.current = true;
-      flushSync(() => setPress((p) => p && { ...p, phase: "burst", particles: makeParticles(p.shape) }));
+      flushSync(() => setPress((p) => p && { ...p, phase: "popping", droplets: makeDroplets(), minis: makeMinis() }));
       spreadTheme(next, x, y);
       window.setTimeout(() => {
         setPress(null);
         busy.current = false;
-      }, Math.max(BURST_MS, SPREAD_MS));
+      }, Math.max(POP_MS, SPREAD_MS));
     }, HOLD_MS);
   };
 
@@ -188,24 +133,34 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     >
       {children}
 
-      {/* Own view-transition layer so the heart and sparkles stay visible above the spreading theme */}
+      {/* Own view-transition layer so the bubble and droplets stay visible above the spreading theme */}
       <div className="theme-burst-layer" aria-hidden="true">
         {press && (
           <div
             key={press.key}
-            className="theme-burst"
-            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--burst-ms": `${BURST_MS}ms` } as React.CSSProperties}
+            className={`theme-burst ${press.phase === "popping" ? "is-popping" : ""}`}
+            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--pop-ms": `${POP_MS}ms`, "--bubble": `${BUBBLE_SIZE}px` } as React.CSSProperties}
           >
-            <HoldShape bitmap={SHAPES[press.shape]} burst={press.phase === "burst"} />
+            <span className="theme-bubble">
+              <span className="theme-bubble-film" />
+            </span>
 
-            {press.particles.map((p, i) => (
+            {press.phase === "popping" && <span className="theme-bubble-ring" />}
+
+            {press.droplets.map((d, i) => (
               <span
-                key={i}
-                className="theme-burst-particle"
-                style={{ "--dx": `${p.dx}px`, "--dy": `${p.dy}px`, "--w": `${p.bitmap[0].length * p.cell}px`, "--h": `${p.bitmap.length * p.cell}px`, animationDelay: `${p.delay}ms` } as React.CSSProperties}
-              >
-                <PixelArt bitmap={p.bitmap} className="block size-full" />
-              </span>
+                key={`d${i}`}
+                className="theme-bubble-drop"
+                style={{ "--dx": `${d.dx}px`, "--dy": `${d.dy}px`, "--s": `${d.size}px`, animationDelay: `${d.delay}ms` } as React.CSSProperties}
+              />
+            ))}
+
+            {press.minis.map((m, i) => (
+              <span
+                key={`m${i}`}
+                className="theme-bubble-mini"
+                style={{ "--dx": `${m.dx}px`, "--rise": `${m.rise}px`, "--s": `${m.size}px`, animationDelay: `${m.delay}ms` } as React.CSSProperties}
+              />
             ))}
           </div>
         )}
