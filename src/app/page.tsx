@@ -8,6 +8,7 @@ import { ProjectCarousel } from "@/components/project-carousel";
 import { PROJECTS } from "@/lib/projects";
 import { N4dsLogo } from "@/components/n4ds-logo";
 import { InteractiveName } from "@/components/interactive-name";
+import { TextDecode } from "@/components/ui/text-decode";
 import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
 import { Mail, Download } from "lucide-react";
 
@@ -189,23 +190,26 @@ export default function Home() {
         <div className="relative z-10 flex-1 w-full flex flex-col gap-3 md:gap-4 h-full min-h-0">
 
           {/* Top Navigation Bar: profile on the left, section links in the middle, logo on the right */}
-          <header data-no-theme-hold className="shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md px-4 md:px-6 py-3 flex flex-wrap lg:flex-nowrap items-center gap-x-6 gap-y-2">
-            <div className="flex items-center gap-3 shrink-0">
+          {/* On laptops a 1fr / auto / 1fr grid keeps the section links truly centred in the bar,
+              however wide the profile on the left or the logo on the right is */}
+          <header data-no-theme-hold className="shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md px-4 md:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+            <div className="flex items-center gap-3 shrink-0 lg:justify-self-start">
               <div className="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-md overflow-hidden ring-1 ring-white/10">
                 <img src="/nadia.jpeg" alt="Nadia Aisyah Fazila" className="w-full h-full object-cover" />
               </div>
               <div className="leading-tight">
-                <div className="font-heading font-extrabold text-lg md:text-xl tracking-tight text-gradient-brand w-fit">
-                  Nadia
+                {/* White so it stays calm across themes; click to replay the decode */}
+                <div className="font-heading font-extrabold text-lg md:text-xl tracking-tight text-white w-fit">
+                  <TextDecode text="Nadia" speed={55} duration={1200} autoPlay={false} />
                 </div>
-                <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[10px] md:text-[11px] text-white/40 hover:text-brand transition-colors">CS Student @ UI</Link001>
+                <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[10px] md:text-[11px] text-brand/70 hover:text-brand transition-colors">CS Student @ UI</Link001>
               </div>
             </div>
 
             {/* Brand mark: just the N in white (not a link); it swings like laundry on hover and redraws itself on click. Sits top-right on mobile, far right on desktop */}
-            <N4dsLogo variant="mark" strokeWidth={10} className="ml-auto lg:order-last h-8 md:h-9 w-auto shrink-0 text-white" />
+            <N4dsLogo variant="mark" strokeWidth={10} className="ml-auto lg:ml-0 lg:order-last lg:justify-self-end h-8 md:h-9 w-auto shrink-0 text-white" />
 
-            <nav className="w-full lg:w-auto lg:flex-1 min-w-0">
+            <nav className="w-full lg:w-auto min-w-0">
               <Skiper58 />
             </nav>
           </header>

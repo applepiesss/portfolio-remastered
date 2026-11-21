@@ -140,6 +140,8 @@
 :root,
 [data-theme="pink"] {
   --brand: #F9A8D4;
+  /* Same color as the background grid, for accents that should match what dominates the screen */
+  --theme-line: #FF7EB9;
   --brand-grad-from: #ffd9ef;
   --brand-grad-via: #f9a8d4;
   --brand-grad-to: #f0529c;
@@ -148,6 +150,7 @@
 
 [data-theme="blue"] {
   --brand: #93B8FF;
+  --theme-line: #93B8FF;
   --brand-grad-from: #dbe7ff;
   --brand-grad-via: #93b8ff;
   --brand-grad-to: #4f7dff;
@@ -155,6 +158,7 @@
 
 [data-theme="purple"] {
   --brand: #C4A7FF;
+  --theme-line: #B794FF;
   --brand-grad-from: #ecdfff;
   --brand-grad-via: #c4a7ff;
   --brand-grad-to: #8b5cf6;
