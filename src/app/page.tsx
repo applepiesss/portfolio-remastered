@@ -202,8 +202,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Small brand logo (not a link); letters swing like laundry on hover. Sits top-right on mobile, far right on desktop */}
-            <N4dsLogo strokeWidth={11} className="ml-auto lg:order-last h-6 md:h-7 w-auto shrink-0" />
+            {/* Brand mark: just the N in white (not a link); it swings like laundry on hover and redraws itself on click. Sits top-right on mobile, far right on desktop */}
+            <N4dsLogo variant="mark" strokeWidth={10} className="ml-auto lg:order-last h-8 md:h-9 w-auto shrink-0 text-white" />
 
             <nav className="w-full lg:w-auto lg:flex-1 min-w-0">
               <Skiper58 />
