@@ -4,6 +4,7 @@ import {
   animate,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useReducedMotion,
   useSpring,
   useTransform,
@@ -17,6 +18,12 @@ const REACH = 140;
 const REST_WEIGHT = 700;
 const PEAK_WEIGHT = 800;
 const DIP_WEIGHT = 560;
+
+// Hover color: letters near the cursor warm up to a theme shade, then fade back to white on their
+// own once the cursor moves on. Shades rotate per letter, all taken from the current theme
+const SHADES = ["--theme-line", "--brand-grad-via", "--brand-grad-to", "--brand"];
+const WARM_S = 0.15;
+const FADE_S = 1.4;
 
 // A letter can only be stretched a little, like a rubber band
 const PULL = { top: -16, bottom: 16, left: -10, right: 10 };
@@ -71,6 +78,7 @@ export const InteractiveName = ({ text, className }: { text: string; className?:
                 <Letter
                   key={i}
                   char={char}
+                  shade={SHADES[index % SHADES.length]}
                   pointerX={pointerX}
                   still={!!reduceMotion}
                   register={(ripple) => {
@@ -90,12 +98,15 @@ export const InteractiveName = ({ text, className }: { text: string; className?:
 
 const Letter = ({
   char,
+  shade,
   pointerX,
   still,
   register,
   onRelease,
 }: {
   char: string;
+  /** CSS variable holding this letter's theme color */
+  shade: string;
   pointerX: MotionValue<number>;
   still: boolean;
   register: (ripple: Ripple) => void;
@@ -118,6 +129,16 @@ const Letter = ({
   );
   const fontVariationSettings = useTransform(weight, (w) => `"wght" ${Math.round(w)}`);
 
+  // Warms up quickly as the cursor comes close, cools down slowly after it leaves
+  const heat = useMotionValue(0);
+  useMotionValueEvent(distance, "change", (d) => {
+    const target = Math.max(0, 1 - d / (REACH * 0.6));
+    const current = heat.get();
+    if (target > current) animate(heat, target, { duration: WARM_S, ease: "easeOut" });
+    else if (target < current - 0.001) animate(heat, target, { duration: FADE_S, ease: "easeInOut" });
+  });
+  const color = useTransform(heat, (h) => `color-mix(in srgb, var(${shade}) ${Math.round(h * 100)}%, white)`);
+
   // Bounce sent from a neighbour that was pulled and released
   const ripple = useMotionValue(0);
   const y = useTransform(() => lift.get() + ripple.get());
@@ -138,7 +159,7 @@ const Letter = ({
 
   return (
     // Outer span carries hover lift + neighbour ripples; inner span is the part you pull
-    <motion.span className="relative inline-block" style={{ y, fontVariationSettings }}>
+    <motion.span className="relative inline-block" style={{ y, fontVariationSettings, color }}>
       <motion.span
         ref={ref}
         className="relative inline-block cursor-grab touch-none select-none active:cursor-grabbing"
