@@ -14,14 +14,14 @@ I'm Nadia Aisyah Fazila, a Computer Science student at Universitas Indonesia.
 | **Skills** | My tech stack as layered waves of logos, one layer per category |
 | **Projects** | A draggable carousel; each card opens a pop-up with the full write-up, my role, my contributions and links |
 | **Writing** | Articles (coming soon) |
-| **Achievements** | Stickers you can peel to see the certificate |
+| **Achievements** | Embroidered patches; click one to see the certificate |
 
 ## Little details
 
 - **Three color themes.** Hold down anywhere on the background to blow a dotted bubble; when it pops, the theme switches between pink, blue and purple, each with its own animated background.
 - **Pixel art.** The icons and award star are drawn as pixel bitmaps in the theme color.
 - **Resume pages.** Hover to fan out the two pages of my resume, then click one to view it full size or download the PDF.
-- **Peelable stickers.** Achievements peel at the corner on hover and open the certificate on click.
+- **Embroidered patches.** Achievements are stitched patches that lift on hover and open the certificate on click.
 
 ## Built with
 
@@ -68,7 +68,7 @@ Project covers are imported in `projects.ts` rather than referenced by path, so 
 ```
 src/
 ├── app/            # page, layout and global styles
-├── components/     # resume pages, project carousel and pop-up, tech stack, stickers, pixel art
+├── components/     # resume pages, project carousel and pop-up, tech stack, achievement patches, pixel art
 │   └── ui/         # flickering grid, text decode and Skiper UI components
 └── lib/            # content data: projects, tech stack, themes
 public/             # images, certificates and the resume PDF

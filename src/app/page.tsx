@@ -9,7 +9,7 @@ import { PROJECTS } from "@/lib/projects";
 import { N4dsLogo } from "@/components/n4ds-logo";
 import { InteractiveName } from "@/components/interactive-name";
 import { TextDecode } from "@/components/ui/text-decode";
-import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
+import { AchievementPatches, type Achievement } from "@/components/achievement-patches";
 import { Mail, Download } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -89,7 +89,7 @@ const articles = [
   },
 ];
 
-const achievements: Sticker[] = [
+const achievements: Achievement[] = [
   {
     kind: "achievement",
     status: "Finalist",
@@ -360,10 +360,10 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Achievements & Certifications Section: each entry is a sticker that peels off to reveal its certificate */}
+            {/* Achievements & Certifications Section: each entry is an embroidered patch that opens its certificate */}
             <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
               <SectionHeading title="Achievements & certifications" />
-              <StickerSheet stickers={achievements} />
+              <AchievementPatches items={achievements} />
             </section>
 
           </div>
