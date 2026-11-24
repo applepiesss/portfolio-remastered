@@ -142,19 +142,53 @@ const achievements: Sticker[] = [
   },
 ];
 
-const SectionHeading =({ title, hero = false }: { title: string; hero?: boolean }) => (
-  <div className={hero ? "mb-5" : "mb-10"}>
-    {hero ? (
-      <InteractiveName
-        text={title}
-        className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white pb-1 w-fit"
+// How section headings mark their last word: "pixel" (a highlight made of 3px squares, like the
+// background grid) or "double" (the word in the theme color with two underlines)
+const HEADING_MARK: "pixel" | "double" = "pixel";
+
+const HeadingMark = ({ children }: { children: string }) =>
+  HEADING_MARK === "pixel" ? (
+    <span className="relative inline-block">
+      {/* Vertical stripes masked by horizontal stripes leave a grid of 3px squares */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-[3px] h-[9px] opacity-70 [mask-image:linear-gradient(0deg,black_3px,transparent_3px)] [mask-size:6px_6px]"
+        style={{ background: "linear-gradient(90deg, var(--theme-line) 3px, transparent 3px) 0 0 / 6px 6px repeat" }}
       />
-    ) : (
-      <h2 className="font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">{title}</h2>
-    )}
-    <div className={`${hero ? "mt-5" : "mt-6"} h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent`} />
-  </div>
-);
+      {/* The word itself also takes the theme color, like the "double" mark */}
+      <span className="relative text-(--theme-line)">{children}</span>
+    </span>
+  ) : (
+    <span className="relative inline-block text-(--theme-line)">
+      {children}
+      <span aria-hidden="true" className="absolute inset-x-0 -bottom-1 h-[2px] bg-(--theme-line)" />
+      <span aria-hidden="true" className="absolute left-0 right-1/3 -bottom-[7px] h-[2px] bg-(--theme-line) opacity-50" />
+    </span>
+  );
+
+const SectionHeading = ({ title, hero = false }: { title: string; hero?: boolean }) => {
+  if (hero) {
+    return (
+      <div className="mb-5">
+        <InteractiveName
+          text={title}
+          className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white pb-1 w-fit"
+        />
+        <div className="mt-5 h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent" />
+      </div>
+    );
+  }
+  // The last word carries the mark; the rest of the title stays plain
+  const split = title.lastIndexOf(" ");
+  const lead = split === -1 ? "" : title.slice(0, split + 1);
+  const last = title.slice(split + 1);
+  return (
+    <h2 className="mb-10 font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">
+      {lead}
+      <HeadingMark>{last}</HeadingMark>
+    </h2>
+  );
+};
 
 // Each theme grows its own reaction-diffusion pattern, all drawn as thin lines:
 // fingerprint contours, a maze shaded with diagonal hatching, or the outlined swirl
