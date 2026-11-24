@@ -91,7 +91,7 @@ export const ProjectCarousel = ({ projects }: { projects: Project[] }) => {
   return (
     <div>
       <div
-        className="cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing"
+        className="cursor-grab touch-pan-y select-none overflow-hidden active:cursor-grabbing [mask-image:linear-gradient(to_right,rgb(0_0_0/0.4),rgb(0_0_0/0.75)_4%,black_8%,black_92%,rgb(0_0_0/0.75)_96%,rgb(0_0_0/0.4))]"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
