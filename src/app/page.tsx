@@ -232,7 +232,7 @@ export default function Home() {
                   </p>
 
                   {/* Links */}
-                  <div className="flex flex-wrap items-center gap-6 md:gap-8 mt-10">
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 md:gap-8 mt-10">
                     {socials.map(({ label, href, Icon }) => (
                       <div key={label} className="flex items-center gap-2.5 group/social">
                         <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
@@ -247,7 +247,7 @@ export default function Home() {
                 </div>
 
                 {/* Resume as two loose pages that fan out on hover */}
-                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:w-[270px] 2xl:justify-self-center">
+                <div className="w-full max-w-xs mx-auto lg:mx-0 2xl:w-[270px] 2xl:justify-self-center">
                   <ResumeStack
                     pages={[
                       { src: "/resume-page-1.jpg", alt: "Resume of Nadia Aisyah Fazila, page 1" },
