@@ -4,6 +4,9 @@
 // (--brand-grad-*). On hover the letters swing from their top edge like laundry on a clothesline,
 // settling gently when the pointer leaves.
 // Path data comes from a hand-tuned spiral script; `dx` controls the spacing between letters.
+// The "mark" variant draws only the N, in a solid colour (currentColor), cropped to the letter.
+// Its N is widened and its swirls enlarged (see MARK_STROKES); clicking it redraws the N in one
+// stroke, from the bottom left swirl to the top right swirl.
 import React, { useId, useRef } from "react";
 
 const LETTERS: { name: string; dx: number; paths: string[] }[] = [
@@ -47,6 +50,22 @@ const LETTERS: { name: string; dx: number; paths: string[] }[] = [
   },
 ];
 
+// The N for the mark variant: main strokes widened 1.3x around the top of the left stem, swirls
+// scaled 1.35x around where they join so they stay round and readable. Listed in drawing order,
+// bottom left swirl to top right swirl; `reverse` paths are drawn from their end back to their start
+const MARK_STROKES: { d: string; reverse: boolean }[] = [
+  { d: "M16.5,187 L14.42,186.46 L12.41,185.87 L10.47,185.16 L8.6,184.33 L6.82,183.38 L5.13,182.32 L3.54,181.15 L2.07,179.89 L0.69,178.54 L-0.55,177.1 L-1.68,175.59 L-2.68,174.01 L-3.56,172.39 L-4.3,170.73 L-4.91,169.03 L-5.38,167.32 L-5.72,165.59 L-5.94,163.85 L-6.02,162.12 L-5.96,160.42 L-5.79,158.73 L-5.49,157.1 L-5.07,155.49 L-4.53,153.95 L-3.9,152.47 L-3.16,151.05 L-2.32,149.7 L-1.4,148.44 L-0.39,147.27 L0.68,146.18 L1.83,145.19 L3.03,144.31 L4.28,143.52 L5.58,142.84 L6.9,142.26 L8.25,141.8 L9.61,141.44 L10.98,141.19 L12.34,141.05 L13.71,141.01 L15.04,141.07 L16.36,141.23 L17.65,141.49 L18.89,141.84 L20.09,142.27 L21.24,142.8 L22.33,143.41 L23.36,144.07 L24.32,144.81 L25.21,145.62 L26.02,146.47 L26.76,147.38 L27.42,148.32 L27.99,149.29 L28.49,150.29 L28.89,151.32 L29.22,152.36 L29.45,153.41 L29.61,154.45 L29.68,155.49 L29.66,156.52 L29.58,157.52 L29.42,158.5 L29.19,159.45 L28.89,160.36 L28.53,161.24 L28.1,162.07 L27.62,162.85 L27.08,163.58 L26.52,164.25 L25.9,164.87 L25.25,165.44 L24.56,165.93 L23.86,166.36 L23.13,166.74 L22.4,167.05 L21.66,167.29 L20.9,167.47 L20.16,167.59 L19.42,167.64", reverse: true },
+  { d: "M62,38 C59.4,95 55.5,140 46.4,164 C41.2,178 30.8,186 16.5,187", reverse: true },
+  { d: "M62,38 C85.4,90 107.5,135 127,170", reverse: false },
+  { d: "M127,170 C132.2,120 138.7,72 141.3,52 C143.9,32 134.8,24 119.2,24", reverse: false },
+  { d: "M119.2,24 L117.42,24.46 L115.69,24.97 L114.03,25.58 L112.42,26.28 L110.9,27.11 L109.45,28.01 L108.1,29.01 L106.83,30.09 L105.66,31.25 L104.58,32.49 L103.62,33.77 L102.76,35.12 L102,36.51 L101.37,37.95 L100.85,39.4 L100.44,40.88 L100.15,42.36 L99.96,43.85 L99.91,45.32 L99.95,46.79 L100.1,48.22 L100.35,49.64 L100.72,51 L101.16,52.34 L101.72,53.61 L102.35,54.82 L103.07,55.97 L103.86,57.05 L104.71,58.06 L105.65,58.99 L106.62,59.83 L107.66,60.6 L108.72,61.27 L109.83,61.85 L110.97,62.34 L112.13,62.75 L113.29,63.06 L114.46,63.27 L115.64,63.39 L116.81,63.42 L117.96,63.37 L119.08,63.23 L120.19,63.02 L121.25,62.7 L122.28,62.33 L123.26,61.88 L124.2,61.37 L125.07,60.79 L125.9,60.15 L126.67,59.46 L127.37,58.74 L127.99,57.97 L128.56,57.16 L129.06,56.32 L129.47,55.45 L129.82,54.58 L130.09,53.69 L130.3,52.8 L130.43,51.9 L130.5,51.01 L130.49,50.14 L130.42,49.27 L130.27,48.44 L130.08,47.61 L129.82,46.83 L129.51,46.09 L129.15,45.37 L128.73,44.7 L128.27,44.07 L127.79,43.49 L127.26,42.97 L126.69,42.48 L126.11,42.06 L125.5,41.69 L124.88,41.37 L124.25,41.1 L123.61,40.9 L122.98,40.74 L122.33,40.65 L121.7,40.59", reverse: false },
+];
+
+// Crop around the mark's N, with room for the stroke
+const MARK_VIEWBOX = "-18 12 174 187";
+const DRAW_MS = 1100;
+const FULL_VIEWBOX = "0 0 357 225";
+
 const SWING_DEG = 6;
 const SWING_MS = 900; // one side-to-side pass
 const STAGGER_MS = 140;
@@ -59,12 +78,44 @@ const currentAngle = (el: Element) => {
 
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export const N4dsLogo = ({ className, title = "N4ds", strokeWidth = 7 }: {
+export const N4dsLogo = ({ className, title = "N4ds", strokeWidth = 7, variant = "full" }: {
   className?: string;
   title?: string;
   /** In viewBox units; raise it when the logo is shown small so the lines don't get too thin */
   strokeWidth?: number;
+  /** full: all four letters with the theme gradient; mark: just the N in currentColor */
+  variant?: "full" | "mark";
 }) => {
+  const mark = variant === "mark";
+  const shown = mark ? [{ name: "N", dx: 0, paths: MARK_STROKES.map((stroke) => stroke.d) }] : LETTERS;
+  const strokes = useRef<(SVGPathElement | null)[]>([]);
+
+  // Redraw the mark's N in one continuous stroke at an even speed
+  const drawMark = () => {
+    if (!mark || prefersReducedMotion()) return;
+    const lengths = strokes.current.map((path) => path?.getTotalLength() ?? 0);
+    const total = lengths.reduce((sum, length) => sum + length, 0);
+    let travelled = 0;
+    strokes.current.forEach((path, i) => {
+      if (!path) return;
+      const length = lengths[i];
+      path.getAnimations().forEach((a) => a.cancel());
+      path.style.strokeDasharray = `${length} ${length}`;
+      // A negative start offset reveals the path from its end, for strokes drawn backwards
+      const from = MARK_STROKES[i].reverse ? -length : length;
+      const draw = path.animate([{ strokeDashoffset: from }, { strokeDashoffset: 0 }], {
+        duration: (DRAW_MS * length) / total,
+        delay: (DRAW_MS * travelled) / total,
+        easing: "linear",
+        fill: "both",
+      });
+      draw.onfinish = () => {
+        draw.cancel();
+        path.style.strokeDasharray = "";
+      };
+      travelled += length;
+    });
+  };
   // useId can contain characters that break url(#...) references, so keep only safe ones
   const gradientId = `n4ds-grad-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const letters = useRef<(SVGGElement | null)[]>([]);
@@ -113,26 +164,30 @@ export const N4dsLogo = ({ className, title = "N4ds", strokeWidth = 7 }: {
 
   return (
     <svg
-      viewBox="0 0 357 225"
+      viewBox={mark ? MARK_VIEWBOX : FULL_VIEWBOX}
       fill="none"
-      stroke={`url(#${gradientId})`}
+      stroke={mark ? "currentColor" : `url(#${gradientId})`}
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`n4ds-logo ${className ?? ""}`}
+      // Visible overflow so a swinging letter is never clipped by the tight mark crop
+      className={`n4ds-logo overflow-visible ${mark ? "cursor-pointer" : ""} ${className ?? ""}`}
       onPointerEnter={startSwing}
       onPointerLeave={settle}
+      onClick={drawMark}
       role="img"
       aria-label={title}
     >
-      <defs>
-        <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="357" y2="195">
-          <stop offset="0" style={{ stopColor: "var(--brand-grad-from)" }} />
-          <stop offset="0.45" style={{ stopColor: "var(--brand-grad-via)" }} />
-          <stop offset="1" style={{ stopColor: "var(--brand-grad-to)" }} />
-        </linearGradient>
-      </defs>
-      {LETTERS.map((letter, i) => (
+      {!mark && (
+        <defs>
+          <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="357" y2="195">
+            <stop offset="0" style={{ stopColor: "var(--brand-grad-from)" }} />
+            <stop offset="0.45" style={{ stopColor: "var(--brand-grad-via)" }} />
+            <stop offset="1" style={{ stopColor: "var(--brand-grad-to)" }} />
+          </linearGradient>
+        </defs>
+      )}
+      {shown.map((letter, i) => (
         <g key={letter.name} transform={`translate(${letter.dx} 0)`}>
           <g
             className="n4ds-letter"
@@ -140,8 +195,14 @@ export const N4dsLogo = ({ className, title = "N4ds", strokeWidth = 7 }: {
               letters.current[i] = el;
             }}
           >
-            {letter.paths.map((d) => (
-              <path key={d} d={d} />
+            {letter.paths.map((d, j) => (
+              <path
+                key={d}
+                d={d}
+                ref={(el) => {
+                  if (mark) strokes.current[j] = el;
+                }}
+              />
             ))}
           </g>
         </g>

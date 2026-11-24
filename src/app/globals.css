@@ -140,6 +140,8 @@
 :root,
 [data-theme="pink"] {
   --brand: #F9A8D4;
+  /* Same color as the background grid, for accents that should match what dominates the screen */
+  --theme-line: #FF7EB9;
   --brand-grad-from: #ffd9ef;
   --brand-grad-via: #f9a8d4;
   --brand-grad-to: #f0529c;
@@ -148,6 +150,7 @@
 
 [data-theme="blue"] {
   --brand: #93B8FF;
+  --theme-line: #93B8FF;
   --brand-grad-from: #dbe7ff;
   --brand-grad-via: #93b8ff;
   --brand-grad-to: #4f7dff;
@@ -155,6 +158,7 @@
 
 [data-theme="purple"] {
   --brand: #C4A7FF;
+  --theme-line: #B794FF;
   --brand-grad-from: #ecdfff;
   --brand-grad-via: #c4a7ff;
   --brand-grad-to: #8b5cf6;
@@ -195,7 +199,7 @@
   mask-repeat: no-repeat;
 }
 
-/* Heart + sparkles live on their own transition layer, drawn live above the spreading theme */
+/* The dotted bubble lives on its own transition layer, drawn live above the spreading theme */
 .theme-burst-layer {
   position: fixed;
   inset: 0;
@@ -219,161 +223,108 @@
   height: 0;
 }
 
-.theme-hold-shape-wrap {
+/* Dotted bubble: an outline of 3px squares (like the background grid) that grows and wobbles
+   while holding, then pops into flying dots. The radius and each dot's offset are registered
+   custom properties, so they animate smoothly and the dots move out without growing.
+   currentColor is the next theme's color, so the bubble previews the theme it is about to reveal */
+@property --bubble-r {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --dot-offset {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.theme-dot-bubble {
   position: absolute;
+  --bubble-r: var(--bubble-max);
+  animation: theme-bubble-grow var(--hold-ms) cubic-bezier(0.35, 0.35, 0.5, 1.15) both;
 }
 
-/* Pixel-art motion uses steps() so it feels like a retro sprite, matching the grid */
-.theme-hold-shape {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  animation:
-    theme-heart-in 160ms steps(3, end),
-    theme-heart-beat 360ms steps(2, jump-none) 160ms infinite alternate;
+.theme-dot {
+  position: absolute;
+  left: -1.5px;
+  top: -1.5px;
+  width: 3px;
+  height: 3px;
+  background: currentColor;
+  transform: rotate(var(--angle)) translateX(calc(var(--bubble-r) + var(--dot-offset)));
+  animation: theme-dot-wobble 900ms ease-in-out var(--wobble-delay, 0ms) infinite alternate;
 }
 
-/* Unlit pixels are dim; each row switches on as the hold progresses */
-.theme-hold-pixel {
-  opacity: 0.25;
-  animation: theme-pixel-on 1ms forwards;
-}
-
-.theme-hold-shape.is-burst {
-  animation: theme-heart-pop 420ms steps(6, end) forwards;
-}
-
-.theme-hold-shape.is-burst .theme-hold-pixel {
+/* Shine dots sit partway in and stay still while the outline wobbles */
+.theme-dot.is-shine {
+  opacity: 0.7;
+  transform: rotate(var(--angle)) translateX(calc(var(--bubble-r) * var(--shine) + var(--dot-offset)));
   animation: none;
-  opacity: 1;
 }
 
-.theme-burst-particle {
-  position: absolute;
-  left: calc(var(--w) / -2);
-  top: calc(var(--h) / -2);
-  width: var(--w);
-  height: var(--h);
-  opacity: 0;
-  animation: theme-particle-fly var(--burst-ms) steps(12, end) forwards;
+.theme-burst.is-popping .theme-dot-bubble {
+  animation: none;
 }
 
-@keyframes theme-pixel-on {
-  to { opacity: 1; }
+.theme-burst.is-popping .theme-dot {
+  animation: theme-dot-fly var(--pop-ms) cubic-bezier(0.15, 0.7, 0.3, 1) var(--pop-delay) both;
 }
 
-@keyframes theme-heart-in {
-  from { opacity: 0; transform: scale(0.4); }
+@keyframes theme-bubble-grow {
+  from { --bubble-r: 4px; opacity: 0.3; }
+  to { --bubble-r: var(--bubble-max); opacity: 1; }
 }
 
-@keyframes theme-heart-beat {
-  from { transform: scale(1); }
-  to { transform: scale(1.1); }
+@keyframes theme-dot-wobble {
+  from { --dot-offset: -1.5px; }
+  to { --dot-offset: 1.5px; }
 }
 
-@keyframes theme-heart-pop {
-  0% { transform: scale(1.1); opacity: 1; }
-  35% { transform: scale(1.45); opacity: 1; }
-  100% { transform: scale(0.2); opacity: 0; }
-}
-
-@keyframes theme-particle-fly {
-  0% { opacity: 1; transform: translate(0, 0); }
-  70% { opacity: 1; }
-  100% { opacity: 0; transform: translate(var(--dx), var(--dy)); }
-}
-
-
-/* Envelope seal wiggle on hover */
-@keyframes envelope-wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-8deg); }
-  75% { transform: rotate(8deg); }
-}
-
-/* Achievement stickers: resting tilt, corner peel on hover, full peel on click */
-.sticker {
-  --peel: 0px;
-  transform: rotate(var(--tilt));
-  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.sticker-body {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--peel)), calc(100% - var(--peel)) 100%, 0 100%);
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.45));
-  transition: clip-path 250ms ease, filter 250ms ease;
-}
-
-/* The folded-back corner: a light triangle sitting where the body was clipped */
-.sticker-curl {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: var(--peel);
-  height: var(--peel);
-  border-radius: 0 0 14px 0;
-  background: linear-gradient(135deg, #f4f4f6 0%, #d9d9de 48%, transparent 50%);
-  filter: drop-shadow(-2px -2px 3px rgba(0, 0, 0, 0.35));
-  transition: width 250ms ease, height 250ms ease;
-}
-
-.sticker:hover,
-.sticker:focus-visible {
-  --peel: 26px;
-  transform: rotate(calc(var(--tilt) * 0.5)) translateY(-2px);
-}
-
-.sticker.is-peeling {
-  --peel: 120px;
-  transform: rotate(calc(var(--tilt) - 10deg)) translate(-6px, -18px) scale(1.06);
-}
-
-.sticker.is-peeling .sticker-body {
-  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.55));
-}
-
-/* Pixel decor stickers get a white die-cut outline */
-.sticker-decor {
-  filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff);
-}
-
-
-/* Tech stack waves: each layer slides sideways while its logos bob on a shared sine */
-.wave-track {
-  animation: wave-slide linear infinite;
-}
-
-.wave-bob {
-  animation: wave-bob 3s ease-in-out infinite;
-}
-
-/* Only the layer holding the hovered/focused logo pauses; the others keep moving */
-.wave-row:has(.wave-logo:hover) :is(.wave-track, .wave-bob),
-.wave-row:has(.wave-logo:focus-visible) :is(.wave-track, .wave-bob) {
-  animation-play-state: paused;
+@keyframes theme-dot-fly {
+  0% { --dot-offset: 0px; opacity: 1; }
+  70% { opacity: 0.8; }
+  100% { --dot-offset: var(--fly); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wave-track,
-  .wave-bob {
-    animation-play-state: paused;
+  .theme-dot {
+    animation: none;
   }
 }
 
-@keyframes wave-slide {
+/* Achievement patches: each sewn on at its own tilt; hovering lifts it and straightens it out */
+.achievement-patch {
+  transform: rotate(var(--tilt));
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.45));
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 300ms ease;
+}
+
+.achievement-patch:hover,
+.achievement-patch:focus-visible {
+  transform: rotate(0deg) translateY(-4px) scale(1.03);
+  filter: drop-shadow(0 12px 18px rgb(0 0 0 / 0.55));
+}
+
+/* Tech stack ticker: each row slides by half its width (one copy) for a seamless loop */
+.tech-ticker {
+  animation: tech-ticker linear infinite;
+}
+
+@keyframes tech-ticker {
   to {
     transform: translateX(-50%);
   }
 }
 
-@keyframes wave-bob {
-  0%,
-  100% {
-    transform: translateY(calc(var(--wave-amp) * -1));
-  }
-  50% {
-    transform: translateY(var(--wave-amp));
+/* Hovering a row pauses it so its items are easy to read and point at */
+.group\/row:hover .tech-ticker {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-ticker {
+    animation-play-state: paused;
   }
 }
 

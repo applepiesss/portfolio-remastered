@@ -1,14 +1,15 @@
-import { FlickeringGrid } from "@/components/ui/flickering-grid";
+import { ReactionGrid, type ReactionLook, type ReactionPattern } from "@/components/ui/reaction-grid";
 import { Skiper58 } from "@/components/ui/skiper-ui/skiper58";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
 import { ThemeHoldArea } from "@/components/theme-hold-area";
-import { Envelope } from "@/components/envelope";
+import { ResumeStack } from "@/components/resume-stack";
 import { TechStack } from "@/components/tech-stack";
 import { ProjectCarousel } from "@/components/project-carousel";
 import { PROJECTS } from "@/lib/projects";
 import { N4dsLogo } from "@/components/n4ds-logo";
+import { InteractiveName } from "@/components/interactive-name";
 import { TextDecode } from "@/components/ui/text-decode";
-import { StickerSheet, type Sticker } from "@/components/sticker-sheet";
+import { AchievementPatches, type Achievement } from "@/components/achievement-patches";
 import { Mail, Download } from "lucide-react";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -88,7 +89,7 @@ const articles = [
   },
 ];
 
-const achievements: Sticker[] = [
+const achievements: Achievement[] = [
   {
     kind: "achievement",
     status: "Finalist",
@@ -141,26 +142,60 @@ const achievements: Sticker[] = [
   },
 ];
 
-const SectionHeading =({ index, label, title, hero = false }: { index: string; label: string; title: string; hero?: boolean }) => (
-  <div className={hero ? "mb-5" : "mb-10"}>
-    <p className="font-mono text-xs text-brand tracking-wider mb-3">
-      {index} <span className="text-white/20">/</span> {label}
-    </p>
-    {hero ? (
-      <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gradient-brand pb-1 w-fit">
-        <TextDecode text={title} speed={55} duration={2500} />
-      </h2>
-    ) : (
-      <h2 className="font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">{title}</h2>
-    )}
-    <div className={`${hero ? "mt-5" : "mt-6"} h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent`} />
-  </div>
-);
+// How section headings mark their last word: "pixel" (a highlight made of 3px squares, like the
+// background grid) or "double" (the word in the theme color with two underlines)
+const HEADING_MARK: "pixel" | "double" = "pixel";
 
-const gridThemes: { theme: string; color: string }[] = [
-  { theme: "pink", color: "#FF7EB9" },
-  { theme: "blue", color: "#93B8FF" },
-  { theme: "purple", color: "#B794FF" },
+const HeadingMark = ({ children }: { children: string }) =>
+  HEADING_MARK === "pixel" ? (
+    <span className="relative inline-block">
+      {/* Vertical stripes masked by horizontal stripes leave a grid of 3px squares */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-[3px] h-[9px] opacity-70 [mask-image:linear-gradient(0deg,black_3px,transparent_3px)] [mask-size:6px_6px]"
+        style={{ background: "linear-gradient(90deg, var(--theme-line) 3px, transparent 3px) 0 0 / 6px 6px repeat" }}
+      />
+      {/* The word itself also takes the theme color, like the "double" mark */}
+      <span className="relative text-(--theme-line)">{children}</span>
+    </span>
+  ) : (
+    <span className="relative inline-block text-(--theme-line)">
+      {children}
+      <span aria-hidden="true" className="absolute inset-x-0 -bottom-1 h-[2px] bg-(--theme-line)" />
+      <span aria-hidden="true" className="absolute left-0 right-1/3 -bottom-[7px] h-[2px] bg-(--theme-line) opacity-50" />
+    </span>
+  );
+
+const SectionHeading = ({ title, hero = false }: { title: string; hero?: boolean }) => {
+  if (hero) {
+    return (
+      <div className="mb-5">
+        <InteractiveName
+          text={title}
+          className="font-heading text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.15] text-white pb-1 w-fit"
+        />
+        <div className="mt-5 h-px w-full max-w-lg bg-gradient-to-r from-brand/50 via-white/10 to-transparent" />
+      </div>
+    );
+  }
+  // The last word carries the mark; the rest of the title stays plain
+  const split = title.lastIndexOf(" ");
+  const lead = split === -1 ? "" : title.slice(0, split + 1);
+  const last = title.slice(split + 1);
+  return (
+    <h2 className="mb-10 font-heading text-2xl md:text-3xl font-semibold text-white tracking-tight">
+      {lead}
+      <HeadingMark>{last}</HeadingMark>
+    </h2>
+  );
+};
+
+// Each theme grows its own reaction-diffusion pattern, all drawn as thin lines:
+// fingerprint contours, a maze shaded with diagonal hatching, or the outlined swirl
+const gridThemes: { theme: string; color: string; pattern: ReactionPattern; look: ReactionLook; scale?: number }[] = [
+  { theme: "pink", color: "#FF7EB9", pattern: "fingerprint", look: "outline" },
+  { theme: "blue", color: "#93B8FF", pattern: "maze", look: "hatch" },
+  { theme: "purple", color: "#B794FF", pattern: "swirl", look: "outline" },
 ];
 
 export default function Home() {
@@ -169,10 +204,13 @@ export default function Home() {
       {/* Hero Section */}
       <ThemeHoldArea className="relative flex flex-col h-full w-full p-4 sm:p-8 md:p-12 lg:p-16 overflow-hidden">
         {/* Background Grid: only the active theme's grid shows (see globals.css); faded toward the center so the motion frames the content instead of competing with it */}
-        {gridThemes.map(({ theme, color }) => (
+        {gridThemes.map(({ theme, color, pattern, look, scale }) => (
           <div key={theme} className={`bg-grid-${theme} absolute inset-0 z-0 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,rgba(0,0,0,0.8)_10%,black_60%)]`}>
-            <FlickeringGrid
+            <ReactionGrid
               className="w-full h-full"
+              pattern={pattern}
+              look={look}
+              scale={scale}
               squareSize={3}
               gridGap={5}
               color={color}
@@ -183,18 +221,44 @@ export default function Home() {
         ))}
 
         {/* Cards Wrapper */}
-        <div className="relative z-10 flex-1 w-full flex flex-col md:flex-row gap-4 md:gap-6 h-full min-h-0">
+        <div className="relative z-10 flex-1 w-full flex flex-col gap-3 md:gap-4 h-full min-h-0">
+
+          {/* Top Navigation Bar: profile on the left, section links in the middle, logo on the right */}
+          {/* On laptops a 1fr / auto / 1fr grid keeps the section links truly centred in the bar,
+              however wide the profile on the left or the logo on the right is */}
+          <header data-no-theme-hold className="shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md px-4 md:px-6 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+            <div className="flex items-center gap-3 shrink-0 lg:justify-self-start">
+              <div className="w-9 h-9 md:w-10 md:h-10 shrink-0 rounded-md overflow-hidden ring-1 ring-white/10">
+                <img src="/nadia.jpeg" alt="Nadia Aisyah Fazila" className="w-full h-full object-cover" />
+              </div>
+              <div className="leading-tight">
+                {/* White so it stays calm across themes; click to replay the decode */}
+                <div className="font-heading font-extrabold text-lg md:text-xl tracking-tight text-white w-fit">
+                  <TextDecode text="Nadia" speed={55} duration={1200} autoPlay={false} />
+                </div>
+                <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[10px] md:text-[11px] text-brand/70 hover:text-brand transition-colors">CS Student @ UI</Link001>
+              </div>
+            </div>
+
+            {/* Brand mark: just the N in white (not a link); it swings like laundry on hover and redraws itself on click. Sits top-right on mobile, far right on desktop */}
+            <N4dsLogo variant="mark" strokeWidth={10} className="ml-auto lg:ml-0 lg:order-last lg:justify-self-end h-8 md:h-9 w-auto shrink-0 text-white" />
+
+            <nav className="w-full lg:w-auto min-w-0">
+              <Skiper58 />
+            </nav>
+          </header>
 
           {/* Main Content Card */}
           <div data-no-theme-hold className="flex-1 min-h-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md overflow-y-auto scroll-smooth">
 
             {/* About Me Section */}
             <section id="about" className="px-6 md:px-14 lg:px-20 pt-12 md:pt-20 pb-14 md:pb-20">
-              {/* Heading + bio + links form one column; the envelope is centered against all of it */}
-              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,1fr)_270px] gap-10 2xl:gap-12 items-center">
+              {/* Heading + bio + links form one wide column; the resume sits centred in the space to its
+                  right (not pinned to the far edge), so there is no big gap in the middle */}
+              <div className="grid grid-cols-1 2xl:grid-cols-[minmax(0,56rem)_minmax(270px,1fr)] gap-10 2xl:gap-12 items-center">
                 <div>
-                  <SectionHeading index="01" label="About" title="Nadia Aisyah Fazila" hero />
-                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+                  <SectionHeading title="Nadia Aisyah Fazila" hero />
+                  <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-2xl 2xl:max-w-none">
                     Hi, I&apos;m Nadia! I&apos;m a Computer Science student at Universitas Indonesia, still early on and
                     enjoying every bit of it. I learn by doing, which mostly means building something, getting stuck, and
                     somehow figuring it out at 2 a.m. I&apos;ve made a few web and mobile apps so far, and each one taught
@@ -202,7 +266,7 @@ export default function Home() {
                   </p>
 
                   {/* Links */}
-                  <div className="flex flex-wrap items-center gap-6 md:gap-8 mt-10">
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 md:gap-8 mt-10">
                     {socials.map(({ label, href, Icon }) => (
                       <div key={label} className="flex items-center gap-2.5 group/social">
                         <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
@@ -216,20 +280,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Resume, delivered in an envelope. The top padding reserves the space the paper peeks into
-                    when opened (~19% of the envelope width), so the open state is what gets centered */}
-                <div className="w-full max-w-xs md:mx-0 mx-auto 2xl:max-w-none 2xl:pt-[19%]">
-                  <Envelope
-                    src="/resume-preview.jpg"
-                    alt="Resume of Nadia Aisyah Fazila, page 1"
-                    name="resume"
-                    to="recruiters"
-                    title="Nadia's Resume"
-                    subtitle="PDF · 2 pages"
+                {/* Resume as two loose pages that fan out on hover */}
+                <div className="w-full max-w-xs mx-auto lg:mx-0 2xl:w-[270px] 2xl:justify-self-center">
+                  <ResumeStack
+                    pages={[
+                      { src: "/resume-page-1.jpg", alt: "Resume of Nadia Aisyah Fazila, page 1" },
+                      { src: "/resume-page-2.jpg", alt: "Resume of Nadia Aisyah Fazila, page 2" },
+                    ]}
                     downloadHref="/CV_NadiaAisyahFazila.pdf"
-                    downloadPrompt="download my resume to unlock more"
                   />
-                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mt-3 flex justify-center items-center gap-2 text-sm font-medium text-white/80 bg-white/[0.03] border border-white/10 px-5 py-2.5 rounded-md hover:border-brand/40 hover:text-brand hover:bg-white/[0.04] transition-colors duration-300 w-full">
+                  <a href="/CV_NadiaAisyahFazila.pdf" download className="group/resume mx-auto mt-8 flex w-fit items-center gap-2 text-sm font-medium text-white/80 hover:text-brand transition-colors duration-300">
                     <Download className="w-4 h-4 text-brand transition-transform duration-300 group-hover/resume:translate-y-0.5" /> Download Resume
                   </a>
                 </div>
@@ -240,7 +300,7 @@ export default function Home() {
 
             {/* Experience Section */}
             <section id="experience" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
-              <SectionHeading index="02" label="Experience" title="Relevant experience" />
+              <SectionHeading title="Relevant experience" />
               <div className="flex flex-col divide-y divide-white/[0.06]">
                 {experiences.map((exp) => (
                   <div key={`${exp.role}-${exp.org}`} className="grid grid-cols-1 lg:grid-cols-[180px_1fr] gap-2 lg:gap-8 py-7 first:pt-0 last:pb-0">
@@ -265,7 +325,7 @@ export default function Home() {
 
             {/* Skills Section */}
             <section id="skills" className="px-6 md:px-14 lg:px-20 py-14 md:py-20">
-              <SectionHeading index="03" label="Skills" title="Tech stack" />
+              <SectionHeading title="Tech stack" />
               <TechStack />
             </section>
 
@@ -273,7 +333,7 @@ export default function Home() {
 
             {/* Projects Section */}
             <section id="projects" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="04" label="Projects" title="Selected projects" />
+              <SectionHeading title="Selected projects" />
               <ProjectCarousel projects={PROJECTS} />
             </section>
 
@@ -281,7 +341,7 @@ export default function Home() {
 
             {/* Articles Section: upcoming articles, not linked yet */}
             <section id="articles" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="05" label="Articles" title="Writing" />
+              <SectionHeading title="Writing" />
               <div className="flex flex-col divide-y divide-white/[0.06]">
                 {articles.map((article) => (
                   <div key={article.title} className="grid grid-cols-1 lg:grid-cols-[180px_1fr_auto] lg:items-center gap-2 lg:gap-8 py-6 first:pt-0 last:pb-0">
@@ -300,48 +360,18 @@ export default function Home() {
 
             <hr className="border-t border-white/10" />
 
-            {/* Achievements & Certifications Section: each entry is a sticker that peels off to reveal its certificate */}
+            {/* Achievements & Certifications Section: each entry is an embroidered patch that opens its certificate */}
             <section id="achievements" className="px-6 md:px-14 lg:px-20 pt-14 md:pt-20 pb-14 md:pb-20">
-              <SectionHeading index="06" label="Achievements" title="Achievements & certifications" />
-              <StickerSheet stickers={achievements} />
+              <SectionHeading title="Achievements & certifications" />
+              <AchievementPatches items={achievements} />
             </section>
 
           </div>
 
-          {/* Profile & Navigation Card */}
-          <div data-no-theme-hold className="relative w-full md:w-64 lg:w-72 shrink-0 bg-[#0C0C0E]/90 border border-white/10 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-md p-4 md:p-8 flex flex-row md:flex-col items-center md:justify-center gap-4 md:gap-8">
-            {/* Small brand logo tucked in the corner (not a link); letters swing like laundry on hover */}
-            <N4dsLogo strokeWidth={11} className="absolute right-5 top-4 hidden h-7 w-auto md:block" />
-
-
-            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-40 md:h-40 lg:w-48 lg:h-48 shrink-0 rounded-lg overflow-hidden ring-1 ring-white/10">
-              <img
-                src="/nadia.jpeg"
-                alt="Nadia Aisyah Fazila"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="flex-1 md:flex-none flex flex-col justify-center items-center w-full gap-1 md:gap-8">
-              <div className="text-center">
-                <div className="font-heading font-extrabold text-2xl md:text-4xl tracking-tight leading-tight text-gradient-brand w-fit mx-auto">
-                  Nadia
-                </div>
-                <div className="flex justify-center mt-1.5">
-                  <Link001 href="https://cs.ui.ac.id/" className="font-mono text-[11px] text-white/40 hover:text-brand transition-colors">CS Student @ UI</Link001>
-                </div>
-              </div>
-
-              <nav className="w-full">
-                <Skiper58 />
-              </nav>
-
-            </div>
-
-            <p className="hidden md:block absolute bottom-3 inset-x-0 font-mono text-[8px] text-white/25 text-center">
-              psst... hold the background to switch colors
-            </p>
-          </div>
+          {/* Hint sits on the pressable background, under the main card */}
+          <p className="hidden md:block shrink-0 -mt-1 font-mono text-[9px] text-white/30 text-center select-none">
+            psst... hold the background to switch colors
+          </p>
 
         </div>
       </ThemeHoldArea>

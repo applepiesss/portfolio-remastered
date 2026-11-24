@@ -3,112 +3,46 @@
 import React, { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
-import { PixelArt, type Bitmap } from "@/components/pixel-art";
 import { THEME_COLORS, THEMES, type PortfolioTheme } from "@/lib/themes";
 
-const HOLD_MS = 600;
-const BURST_MS = 900;
+const HOLD_MS = 650;
+const POP_MS = 900;
 const SPREAD_MS = 1400;
 const MOVE_TOLERANCE = 12;
 
-// Hold shapes, used in this order on successive holds
-const SHAPES = {
-  heart: [
-    ".XX...XX.",
-    "XXXX.XXXX",
-    "XXXXXXXXX",
-    "XXXXXXXXX",
-    ".XXXXXXX.",
-    "..XXXXX..",
-    "...XXX...",
-    "....X....",
-  ],
-  star: [
-    "....X....",
-    "....X....",
-    "...XXX...",
-    "XXXXXXXXX",
-    ".XXXXXXX.",
-    "..XXXXX..",
-    "..XXXXX..",
-    ".XX...XX.",
-    ".X.....X.",
-  ],
-  // Two hollow loops with long trailing ribbons
-  bow: [
-    ".XXX.....XXX.",
-    "X...X...X...X",
-    "X....XXX....X",
-    "X...XXXXX...X",
-    ".XXX.XXX.XXX.",
-    "....XX.XX....",
-    "....XX.XX....",
-    "...XX...XX...",
-    "...XX...XX...",
-    "..XX.....XX..",
-    "..XX.....XX..",
-  ],
-};
-// Particle-sized versions of each shape
-const MINI: Record<keyof typeof SHAPES, string[]> = {
-  heart: ["XX.XX", "XXXXX", ".XXX.", "..X.."],
-  star: ["..X..", "XXXXX", ".XXX.", ".X.X."],
-  bow: ["XX.XX", "X.X.X", "XX.XX", ".X.X."],
-};
-const SHAPE_ORDER = Object.keys(SHAPES) as (keyof typeof SHAPES)[];
-const SPARKLE = [".X.", "XXX", ".X."];
-const PIXEL = ["X"];
+// Dotted bubble: 3px squares like the background grid, spaced around a circle that grows while holding
+const BUBBLE_RADIUS = 18;
+// Keeps the dots about 8px apart around the outline, like the background grid
+const DOTS = 14;
+// A short arc of dots inside the upper left, so the ring reads as a bubble rather than a hoop
+const SHINE = [
+  { angle: 200, radius: 0.62 },
+  { angle: 218, radius: 0.66 },
+  { angle: 236, radius: 0.62 },
+];
 
-const HOLD_CELL = 2.5;
+type Dot = { angle: number; fly: number; delay: number };
 
-type ShapeName = keyof typeof SHAPES;
+// Each dot of the outline flies a different distance when the bubble pops, so it reads as a burst
+const makeDots = (): Dot[] =>
+  Array.from({ length: DOTS }, (_, i) => ({
+    angle: (i / DOTS) * 360,
+    fly: 18 + Math.random() * 30,
+    delay: Math.random() * 60,
+  }));
 
-// Centered on the press point; pixels light up from the bottom row to the top over HOLD_MS
-const HoldShape = ({ bitmap, burst }: { bitmap: Bitmap; burst: boolean }) => {
-  const w = bitmap[0].length * HOLD_CELL;
-  const h = bitmap.length * HOLD_CELL;
-  return (
-    <span className="theme-hold-shape-wrap" style={{ left: -w / 2, top: -h / 2, width: w, height: h }}>
-      <PixelArt
-        bitmap={bitmap}
-        className={`theme-hold-shape ${burst ? "is-burst" : ""}`}
-        pixelClassName="theme-hold-pixel"
-        rowDelay={(row) => ((bitmap.length - 1 - row) / bitmap.length) * HOLD_MS}
-      />
-    </span>
-  );
-};
-
-type Particle = { bitmap: Bitmap; cell: number; dx: number; dy: number; delay: number };
-type Press = { x: number; y: number; color: string; key: number; shape: ShapeName; phase: "holding" | "burst"; particles: Particle[] };
-
-// Mix of single pixels, little "+" sparkles and mini versions of the held shape
-const makeParticles = (shape: ShapeName): Particle[] =>
-  Array.from({ length: 16 }, (_, i) => {
-    const angle = (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-    const distance = 50 + Math.random() * 45;
-    const kind = i % 4;
-    return {
-      bitmap: kind === 0 ? MINI[shape] : kind === 2 ? SPARKLE : PIXEL,
-      cell: kind === 0 || kind === 2 ? 1.75 : 2 + Math.round(Math.random()),
-      dx: Math.cos(angle) * distance,
-      dy: Math.sin(angle) * distance,
-      delay: Math.random() * 80,
-    };
-  });
+type Press = { x: number; y: number; color: string; key: number; phase: "holding" | "popping"; dots: Dot[] };
 
 /**
  * Press and hold anywhere on the background (outside elements marked
- * `data-no-theme-hold`) to cycle the theme. A pixel shape lights up row by row
- * while holding, bursts into pixel sparkles, and the new theme spreads out from that point.
+ * `data-no-theme-hold`) to cycle the theme. A bubble outlined in dots grows and wobbles under the
+ * pointer while holding, then pops: its dots burst outward and fade as the new theme spreads from that point.
  */
 export const ThemeHoldArea = ({ className, children }: { className?: string; children: React.ReactNode }) => {
   const [press, setPress] = useState<Press | null>(null);
   const timer = useRef<number | null>(null);
   const origin = useRef<{ x: number; y: number } | null>(null);
   const busy = useRef(false);
-  // Cycles through SHAPE_ORDER on each hold
-  const holdCount = useRef(0);
 
   const cancel = () => {
     if (timer.current) window.clearTimeout(timer.current);
@@ -128,7 +62,7 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
       return;
     }
 
-    // A soft-edged circle (see ::view-transition-new in globals.css) grows from the burst point;
+    // A soft-edged circle (see ::view-transition-new in globals.css) grows from the pop point;
     // its solid core is 70% of the mask size, so the mask must be large enough for that core to cover the far corner
     const reach = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
     const end = (reach / 0.7) * 2;
@@ -154,18 +88,17 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     const { clientX: x, clientY: y } = e;
 
     origin.current = { x, y };
-    const shape = SHAPE_ORDER[holdCount.current++ % SHAPE_ORDER.length];
-    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, shape, phase: "holding", particles: [] });
+    setPress({ x, y, color: THEME_COLORS[next], key: e.timeStamp, phase: "holding", dots: makeDots() });
     timer.current = window.setTimeout(() => {
       timer.current = null;
       origin.current = null;
       busy.current = true;
-      flushSync(() => setPress((p) => p && { ...p, phase: "burst", particles: makeParticles(p.shape) }));
+      flushSync(() => setPress((p) => p && { ...p, phase: "popping" }));
       spreadTheme(next, x, y);
       window.setTimeout(() => {
         setPress(null);
         busy.current = false;
-      }, Math.max(BURST_MS, SPREAD_MS));
+      }, Math.max(POP_MS, SPREAD_MS));
     }, HOLD_MS);
   };
 
@@ -188,25 +121,38 @@ export const ThemeHoldArea = ({ className, children }: { className?: string; chi
     >
       {children}
 
-      {/* Own view-transition layer so the heart and sparkles stay visible above the spreading theme */}
+      {/* Own view-transition layer so the bubble stays visible above the spreading theme */}
       <div className="theme-burst-layer" aria-hidden="true">
         {press && (
           <div
             key={press.key}
-            className="theme-burst"
-            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--burst-ms": `${BURST_MS}ms` } as React.CSSProperties}
+            className={`theme-burst ${press.phase === "popping" ? "is-popping" : ""}`}
+            style={{ left: press.x, top: press.y, color: press.color, "--hold-ms": `${HOLD_MS}ms`, "--pop-ms": `${POP_MS}ms` } as React.CSSProperties}
           >
-            <HoldShape bitmap={SHAPES[press.shape]} burst={press.phase === "burst"} />
-
-            {press.particles.map((p, i) => (
-              <span
-                key={i}
-                className="theme-burst-particle"
-                style={{ "--dx": `${p.dx}px`, "--dy": `${p.dy}px`, "--w": `${p.bitmap[0].length * p.cell}px`, "--h": `${p.bitmap.length * p.cell}px`, animationDelay: `${p.delay}ms` } as React.CSSProperties}
-              >
-                <PixelArt bitmap={p.bitmap} className="block size-full" />
-              </span>
-            ))}
+            <div className="theme-dot-bubble" style={{ "--bubble-max": `${BUBBLE_RADIUS}px` } as React.CSSProperties}>
+              {press.dots.map((dot, i) => (
+                <span
+                  key={i}
+                  className="theme-dot"
+                  style={
+                    {
+                      "--angle": `${dot.angle}deg`,
+                      "--fly": `${dot.fly}px`,
+                      // Wobble delay follows the angle, so a gentle wave runs around the outline
+                      "--wobble-delay": `${-(dot.angle / 360) * 900}ms`,
+                      "--pop-delay": `${dot.delay}ms`,
+                    } as React.CSSProperties
+                  }
+                />
+              ))}
+              {SHINE.map((shine, i) => (
+                <span
+                  key={`s${i}`}
+                  className="theme-dot is-shine"
+                  style={{ "--angle": `${shine.angle}deg`, "--shine": shine.radius, "--fly": "10px", "--pop-delay": "0ms" } as React.CSSProperties}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>

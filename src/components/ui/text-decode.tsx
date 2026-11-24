@@ -11,13 +11,15 @@ type Letter = { char: string; locked: boolean; popKey: number };
 /**
  * Scrambles the text, then locks the letters in one by one from left to right; each letter
  * does a small bounce as it lands. Renders the real text first (no empty/jumping heading),
- * and replays on click.
+ * and replays on click. The width is held at the real text's width, so scrambled letters
+ * never push the surrounding layout around.
  */
 export const TextDecode = ({
   text,
   className,
   speed = 60,
   duration = 2000,
+  autoPlay = true,
 }: {
   text: string;
   className?: string;
@@ -25,6 +27,8 @@ export const TextDecode = ({
   speed?: number;
   /** Total time until the last letter locks in (ms) */
   duration?: number;
+  /** Decode once on mount; when false it only decodes on click */
+  autoPlay?: boolean;
 }) => {
   const [letters, setLetters] = useState<Letter[]>(() => [...text].map((char) => ({ char, locked: true, popKey: 0 })));
   const interval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -59,24 +63,28 @@ export const TextDecode = ({
   }, [text, speed, duration]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    decode();
+    if (autoPlay && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) decode();
     return () => {
       if (interval.current) clearInterval(interval.current);
     };
-  }, [decode]);
+  }, [decode, autoPlay]);
 
   return (
-    <span className={`cursor-pointer ${className || ""}`} onClick={decode} title="Click to decode again" aria-label={text}>
-      {letters.map((l, i) => (
-        <span
-          key={`${i}-${l.popKey}`}
-          aria-hidden="true"
-          className={`decode-letter ${l.locked && l.popKey > 0 ? "decode-pop" : ""} ${l.locked ? "" : "opacity-60"}`}
-        >
-          {l.char}
-        </span>
-      ))}
+    <span className={`relative inline-block cursor-pointer ${className || ""}`} onClick={decode} aria-label={text}>
+      {/* Invisible real text reserves the final width; the animated letters sit on top of it */}
+      <span aria-hidden="true" className="invisible">
+        {text}
+      </span>
+      <span aria-hidden="true" className="absolute inset-0 whitespace-nowrap">
+        {letters.map((l, i) => (
+          <span
+            key={`${i}-${l.popKey}`}
+            className={`decode-letter ${l.locked && l.popKey > 0 ? "decode-pop" : ""} ${l.locked ? "" : "opacity-60"}`}
+          >
+            {l.char}
+          </span>
+        ))}
+      </span>
     </span>
   );
 };
